@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: ForensicExpertWitnessReport
+OpenIDE-Module-Layer: ForensicExpertWitnessReport/layer.xml
+OpenIDE-Module-Localizing-Bundle: ForensicExpertWitnessReport/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
