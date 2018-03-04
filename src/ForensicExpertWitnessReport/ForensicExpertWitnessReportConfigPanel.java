@@ -94,7 +94,7 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         } catch(Exception e){
             Logger.getLogger(Document2.class.getName()).log(Level.SEVERE, "Failed to get pre-existing forensic expert witness reports", e);
         }   
-    }
+    } 
     
     private void initComponents() {
 
