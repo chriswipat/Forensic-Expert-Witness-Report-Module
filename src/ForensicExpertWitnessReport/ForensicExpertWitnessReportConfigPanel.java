@@ -28,19 +28,22 @@ import org.sleuthkit.autopsy.coreutils.Logger;
 import org.sleuthkit.datamodel.TagName;
 import org.sleuthkit.datamodel.TskCoreException;
 import javax.swing.JFileChooser;
-import java.io.File;
 import com.aspose.words.Document;
+
 
 public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
 
     private Document selectedDocument = null;
-    private final Map<String, Boolean> tagNameSelections = new LinkedHashMap<>();
+    private final Map<String, Boolean> tagNameSelections = new LinkedHashMap<String, Boolean>();
     private final TagNamesListModel tagsNamesListModel = new TagNamesListModel();  
     private final TagsNamesListCellRenderer tagsNamesRenderer = new TagsNamesListCellRenderer();
     private List<TagName> tagNames;
     private static final long serialVersionUID = 1L;
     private String inputtedForensicExpertWitnesReport = null;
     //private String dataDir = getDataDir(ForensicExpertWitnessReportConfigPanel.class);
+    
+    private Document2 input;
+    private Document2 TemplateOne;
     
     ForensicExpertWitnessReportConfigPanel() {
         initComponents();
@@ -85,22 +88,22 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     
     private void populateForensicExpertWitnessReports() {
         expertWitnessReportComboBox.removeAllItems();
-        try {
-            Document doc = new Document("C:\\Users\\student\\Downloads\\1.docx"); 
-            expertWitnessReportComboBox.addItem(doc);
+        try {             
+            TemplateOne = new Document2("C:\\Users\\student\\Downloads\\1.docx");            
+            expertWitnessReportComboBox.addItem(TemplateOne);
         } catch(Exception e){
-            Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, "Failed to get pre-existing forensic expert witness reports", e);
+            Logger.getLogger(Document2.class.getName()).log(Level.SEVERE, "Failed to get pre-existing forensic expert witness reports", e);
         }   
     }
     
     private void initComponents() {
 
     jScrollPane1 = new javax.swing.JScrollPane();
-    tagNamesListBox = new javax.swing.JList<>();
+    tagNamesListBox = new javax.swing.JList<String>();
     selectAllButton = new javax.swing.JButton();
     deselectAllButton = new javax.swing.JButton();
     jLabel1 = new javax.swing.JLabel();
-    expertWitnessReportComboBox = new javax.swing.JComboBox<>();
+    expertWitnessReportComboBox = new javax.swing.JComboBox<Document2>();    
     chooseExpertWitnessReportButton = new javax.swing.JButton();
     jLabel2 = new javax.swing.JLabel(); 
     jScrollPane1.setViewportView(tagNamesListBox);
@@ -209,8 +212,8 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
             
             inputtedForensicExpertWitnesReport = fileChooser.getSelectedFile().getAbsolutePath();
             try {
-                populateForensicExpertWitnessReports();
-                Document input = new Document(inputtedForensicExpertWitnesReport); 
+                populateForensicExpertWitnessReports();               
+                input = new Document2(inputtedForensicExpertWitnesReport); 
                 expertWitnessReportComboBox.addItem(input);
             } catch(Exception e){
                 Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, "Failed to retrieve forensic expert witness report", e);
@@ -289,16 +292,55 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
             return new JLabel();
         }
     }
+    
+//    // This class renders the items in the forensic expert witness report combo list component
+//    private class ComboBoxRenderer implements ListCellRenderer {
+//        
+//        public ComboBoxRenderer() {        
+//        }
+//
+//        public Component getListCellRendererComponent(JList list,Object value,int index,boolean isSelected,boolean cellHasFocus) {
+//            setText("asdf");
+//            return this;
+//        }
+//        
+//    }
+    
+    private class Document2 extends Document {
+        private Document doc;
+        private String name = "blah";
+        
+        private Document2(String name) throws Exception {
+            this.name = name;
+            try {             
+                doc = new Document(name);
+            } catch(Exception e){
+                Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, "Failed to create new document", e);
+            }  
+        }
+        
+        @Override
+        public String toString(){
+            return name;
+        }
+        
+        @Override
+        public Document getDocument() {
+           return doc;
+        }
+    }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton chooseExpertWitnessReportButton;
     private javax.swing.JButton deselectAllButton;
-    private javax.swing.JComboBox<Document> expertWitnessReportComboBox;
+    private javax.swing.JComboBox<Document2> expertWitnessReportComboBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton selectAllButton;
-    private javax.swing.JList<String> tagNamesListBox;
-    // End of variables declaration//GEN-END:variables
+    private javax.swing.JList<String> tagNamesListBox = new JList<String>();
+    // End of variables declaration//GEN-END:variables    
     
 }
