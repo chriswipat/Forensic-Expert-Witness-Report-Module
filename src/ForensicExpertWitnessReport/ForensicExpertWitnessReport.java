@@ -12,107 +12,35 @@ package ForensicExpertWitnessReport;
 import javax.swing.JPanel;
 import org.sleuthkit.autopsy.report.GeneralReportModule;
 import org.sleuthkit.autopsy.report.ReportProgressPanel;
-import java.util.ArrayList;
-import java.util.List;
-import com.aspose.words.Document;
-
-import java.lang.System;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
-import org.sleuthkit.datamodel.TskData;
-import org.sleuthkit.autopsy.casemodule.Case;
-import org.sleuthkit.autopsy.coreutils.Logger;
-import org.sleuthkit.autopsy.report.GeneralReportModuleAdapter;
+import java.util.HashSet;
 import org.sleuthkit.autopsy.report.ReportProgressPanel.ReportStatus;
-import org.sleuthkit.autopsy.casemodule.services.FileManager;
-import org.sleuthkit.datamodel.TskCoreException;
 import org.sleuthkit.autopsy.casemodule.services.TagsManager;
 import org.sleuthkit.datamodel.ContentTag;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.datamodel.TagName;
+import org.sleuthkit.datamodel.TskCoreException;
+import java.util.List;
 
-import org.sleuthkit.autopsy.report.ReportGenerator.TableReportsWorker;
-
-
-/*
-* First Accessor method 
-* 
-*/
 public class ForensicExpertWitnessReport implements GeneralReportModule
 {
     // Declare Instance Variables
-    public String name = "ForensicExpertWitnessReport";
-    public String desc = "The most awesome module!";
-    public String filepath;
+    public String name = "Forensic Expert Witness Report";
+    public String desc = "Add tagged files into a forensic expert witness report.";
+    public String filepath = "";
     public String normalizedBaseDir;
-    public TagsManager tagsmanager;
+    public TagsManager tagsmanager = Case.getCurrentCase().getServices().getTagsManager();
     public ArrayList<ContentTag> TaggedFiles;
-    
-    // Static instance of this report
+    private HashSet<String> tagNamesFilter = new HashSet<>();  
+    private List<TagName> tagNames;
     private static ForensicExpertWitnessReport instance;   
+    private ForensicExpertWitnessReportConfigPanel configPanel;
 
-    @Override
-    public void generateReport(String baseReportDir, ReportProgressPanel pnl) 
-    {       
-        // Declare a list of type ContentTag
-        List<ContentTag> TaggedFiles = new ArrayList<ContentTag>();
-        
-        // Retrieve content of tagged files, set to our declared list
-        try {
-        TaggedFiles = tagsmanager.getAllContentTags();
-        } catch (TskCoreException ex) {
-            java.util.logging.Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        pnl.setIndeterminate(false);
-        pnl.start();
-        pnl.setMaximumProgress(TaggedFiles.size());
-        
-        // For each content of tagged file in the ArrayList        
-        for (ContentTag CT : TaggedFiles) {
-            
-            // skip tags that we are not reporting on 
-            if (passesTagNamesFilter(CT.getName().getDisplayName()) == false) {
-                continue;
-            }
-                   
-            String fileName;
-            try {
-                fileName = CT.getContent().getUniquePath();
-            } catch (TskCoreException ex) {
-                fileName = CT.getContent().getName();
-            }
-            
-            // Report.write(t);
-            pnl.increment();
-        }
-  
-        // Add the report to the Case, so it is shown in the tree                      
-        try {
-            normalizedBaseDir = Paths.get(baseReportDir).normalize().toString();
-            filepath = Paths.get(normalizedBaseDir, "report.docx").normalize().toString();
-            Case.getCurrentCase().addReport(filepath, name, "report.docx");
-        } catch (TskCoreException ex) {
-            java.util.logging.Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        pnl.complete(ReportStatus.COMPLETE);
-        
-        
-        
+    public ForensicExpertWitnessReport() {
     }
     
-    private boolean passesTagNamesFilter(String tagName) {
-        return tagNamesFilter.isEmpty() || tagNamesFilter.contains(tagName);
-    }
-
-    @Override
-    public JPanel getConfigurationPanel() {
-        // Return null for now
-        return null;
-    }
-
     @Override
     public String getName() {
         return name;
@@ -125,7 +53,62 @@ public class ForensicExpertWitnessReport implements GeneralReportModule
 
     @Override
     public String getRelativeFilePath() {
-        return normalizedBaseDir;
+        return filepath;
+    }
+    
+    @Override
+    public void generateReport(String baseReportDir, ReportProgressPanel progressPanel) {       
+        // Declare a list of type ContentTag
+        List<ContentTag> TaggedFiles = new ArrayList<ContentTag>();
+        
+        // Retrieve content of tagged file names, set to our declared list
+        try {
+            TaggedFiles = tagsmanager.getAllContentTags();
+        } catch (TskCoreException ex) {
+            java.util.logging.Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        progressPanel.setIndeterminate(false);
+        progressPanel.start();
+        progressPanel.setMaximumProgress(TaggedFiles.size());
+        progressPanel.updateStatusLabel("Reporting files...");
+        
+        // For each content of tagged file in the ArrayList        
+        for (ContentTag CT : TaggedFiles) {
+            
+//            // skip tags that we are not reporting on 
+//            if (passesTagNamesFilter(CT.getName().getDisplayName()) == false) {
+//                continue;
+//            }
+                   
+            String fileName;
+            try {
+                fileName = CT.getContent().getUniquePath();
+            } catch (TskCoreException ex) {
+                fileName = CT.getContent().getName();
+            }
+            
+            // Report.write(t);
+            progressPanel.increment();
+        }
+  
+        // Add the report to the Case, so it is shown in the tree                      
+        try {
+            normalizedBaseDir = Paths.get(baseReportDir).normalize().toString();
+            filepath = Paths.get(normalizedBaseDir, "report.docx").normalize().toString();
+            Case.getCurrentCase().addReport(filepath, name, "report.docx");
+        } catch (TskCoreException ex) {
+            java.util.logging.Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        progressPanel.complete(ReportStatus.COMPLETE);  
+
+    }
+
+    @Override
+    public JPanel getConfigurationPanel() {
+        configPanel = new ForensicExpertWitnessReportConfigPanel();
+        return configPanel;
     }
     
     // Get the default instance of this report
