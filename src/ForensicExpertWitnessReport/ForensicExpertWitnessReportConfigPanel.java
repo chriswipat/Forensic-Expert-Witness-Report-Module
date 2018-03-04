@@ -25,7 +25,6 @@ import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
 import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.autopsy.coreutils.Logger;
-import org.sleuthkit.autopsy.modules.hashdatabase.HashDbManager.HashDb;
 import org.sleuthkit.datamodel.TagName;
 import org.sleuthkit.datamodel.TskCoreException;
 import javax.swing.JFileChooser;
@@ -33,36 +32,29 @@ import java.io.File;
 import com.aspose.words.Document;
 
 public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
-    
-    private static final long serialVersionUID = 1L;
-    private List<TagName> tagNames;
+
+    private Document selectedDocument = null;
     private final Map<String, Boolean> tagNameSelections = new LinkedHashMap<>();
     private final TagNamesListModel tagsNamesListModel = new TagNamesListModel();  
     private final TagsNamesListCellRenderer tagsNamesRenderer = new TagsNamesListCellRenderer();
-    private Document selectedDocument = null;
-    String forensicExpertWitnesReportFile = null;
-    
-    // Fix this to link to imported NB document, then add to combo box
-    Document doc = new Document("ForensicExpertWitnesReport.1.docx");
-    
-    doc.save("Document.Doc2PdfSave Out.pdf");
+    private List<TagName> tagNames;
+    private static final long serialVersionUID = 1L;
+    private String inputtedForensicExpertWitnesReport = null;
+    //private String dataDir = getDataDir(ForensicExpertWitnessReportConfigPanel.class);
     
     ForensicExpertWitnessReportConfigPanel() {
         initComponents();
         populateTagNameComponents();
+        populateForensicExpertWitnessReports();
     }
-    
-    public String getReportFile() {
-        return forensicExpertWitnesReportFile;
-   }
-    
-    private void populateTagNameComponents() 
-    {
+        
+    private void populateTagNameComponents() {
+        
         // Get the tag names in use for the current case.
         try {
             tagNames = Case.getCurrentCase().getServices().getTagsManager().getTagNamesInUse();
         } catch (TskCoreException ex) {
-            Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, "Failed to get tag names", ex);
+            Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to get tag names", ex);
             JOptionPane.showMessageDialog(null, "Error getting tag names for case.", "Tag Names Not Found", JOptionPane.ERROR_MESSAGE);
         }
         // Mark the tag names as unselected. Note that tagNameSelections is a
@@ -91,6 +83,16 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         });
     }
     
+    private void populateForensicExpertWitnessReports() {
+        expertWitnessReportComboBox.removeAllItems();
+        try {
+            Document doc = new Document("C:\\Users\\student\\Downloads\\1.docx"); 
+            expertWitnessReportComboBox.addItem(doc);
+        } catch(Exception e){
+            Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, "Failed to get pre-existing forensic expert witness reports", e);
+        }   
+    }
+    
     private void initComponents() {
 
     jScrollPane1 = new javax.swing.JScrollPane();
@@ -98,15 +100,11 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     selectAllButton = new javax.swing.JButton();
     deselectAllButton = new javax.swing.JButton();
     jLabel1 = new javax.swing.JLabel();
-    hashSetsComboBox = new javax.swing.JComboBox<>();
+    expertWitnessReportComboBox = new javax.swing.JComboBox<>();
     chooseExpertWitnessReportButton = new javax.swing.JButton();
-    jLabel2 = new javax.swing.JLabel();
- 
+    jLabel2 = new javax.swing.JLabel(); 
     jScrollPane1.setViewportView(tagNamesListBox);
-    
-    // Add the word documents to the combobox
-    hashSetsComboBox.addItem(doc);
- 
+     
     org.openide.awt.Mnemonics.setLocalizedText(selectAllButton, "Select all"); // NOI18N
     selectAllButton.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -123,9 +121,9 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
  
     org.openide.awt.Mnemonics.setLocalizedText(jLabel1, "Export files tagged as:"); // NOI18N 
     
-    hashSetsComboBox.addActionListener(new java.awt.event.ActionListener() {
+    expertWitnessReportComboBox.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            hashSetsComboBoxActionPerformed(evt);
+            expertWitnessReportComboBoxActionPerformed(evt);
         }
     });
  
@@ -151,7 +149,7 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jScrollPane1)
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(hashSetsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(expertWitnessReportComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(chooseExpertWitnessReportButton)))
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -176,81 +174,104 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
             .addComponent(jLabel2)
             .addGap(4, 4, 4)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(hashSetsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(expertWitnessReportComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(chooseExpertWitnessReportButton))
             .addContainerGap())
     );
 }// </editor-fold>//GEN-END:initComponents
     
-private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
-    for (TagName tagName : tagNames) {
-        tagNameSelections.put(tagName.getDisplayName(), Boolean.TRUE);
-    }
-    tagNamesListBox.repaint();
-}//GEN-LAST:event_selectAllButtonActionPerformed
+    private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
+        for (TagName tagName : tagNames) {
+            tagNameSelections.put(tagName.getDisplayName(), Boolean.TRUE);
+        }
+        tagNamesListBox.repaint();
+    }//GEN-LAST:event_selectAllButtonActionPerformed
  
-private void hashSetsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hashSetsComboBoxActionPerformed
-    selectedDocument = (Document)hashSetsComboBox.getSelectedItem();
-}//GEN-LAST:event_hashSetsComboBoxActionPerformed
+    private void expertWitnessReportComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hashSetsComboBoxActionPerformed
+        selectedDocument = (Document)expertWitnessReportComboBox.getSelectedItem();
+    }//GEN-LAST:event_hashSetsComboBoxActionPerformed
  
-private void deselectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectAllButtonActionPerformed
-    for (TagName tagName : tagNames) {
-        tagNameSelections.put(tagName.getDisplayName(), Boolean.FALSE);
-    }
-    tagNamesListBox.repaint();
-}//GEN-LAST:event_deselectAllButtonActionPerformed
+    private void deselectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectAllButtonActionPerformed
+        for (TagName tagName : tagNames) {
+            tagNameSelections.put(tagName.getDisplayName(), Boolean.FALSE);
+        }
+        tagNamesListBox.repaint();
+    }//GEN-LAST:event_deselectAllButtonActionPerformed
 
-private void chooseExpertWitnessReportButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void chooseExpertWitnessReportButtonActionPerformed(java.awt.event.ActionEvent evt) {
     
-    JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
   
-    int result = fileChooser.showOpenDialog(null);
+        int result = fileChooser.showOpenDialog(null);
  
-    if (result == JFileChooser.APPROVE_OPTION) {
-        forensicExpertWitnesReportFile = fileChooser.getSelectedFile().getAbsolutePath();
-        
-        // Add here where to set the selected file
-        jTextField1.setText(stixFile);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            
+            inputtedForensicExpertWitnesReport = fileChooser.getSelectedFile().getAbsolutePath();
+            try {
+                populateForensicExpertWitnessReports();
+                Document input = new Document(inputtedForensicExpertWitnesReport); 
+                expertWitnessReportComboBox.addItem(input);
+            } catch(Exception e){
+                Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, "Failed to retrieve forensic expert witness report", e);
+            }         
+        }    
     }
     
-}
- 
-//private void configureHashDatabasesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configureHashDatabasesButtonActionPerformed
-//    HashLookupSettingsPanel configPanel = new HashLookupSettingsPanel();
-//    configPanel.load();
-//    if (JOptionPane.showConfirmDialog(null, configPanel, "Hash Set Configuration", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-//        configPanel.store();
-//        populateHashSetComponents();
-//    } else {
-//        configPanel.cancel();
-//        populateHashSetComponents();
+    public Document getSelectedDocument() {
+        return selectedDocument;
+   }
+
+//    public static String getDataDir(Class c) {
+//        File dir = new File(System.getProperty("user.dir"));
+//        dir = new File(dir, "src");
+//        dir = new File(dir, "main");
+//        dir = new File(dir, "resources");
+//
+//        for (String s : c.getName().split("\\.")) {
+//            dir = new File(dir, s);
+//            if (dir.isDirectory() == false)
+//                dir.mkdir();
+//        }
+//        System.out.println("Using data directory: " + dir.toString());
+//        return dir.toString() + File.separator;
 //    }
-//}//GEN-LAST:event_configureHashDatabasesButtonActionPerformed
+ 
+//  private void configureHashDatabasesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configureHashDatabasesButtonActionPerformed
+//      HashLookupSettingsPanel configPanel = new HashLookupSettingsPanel();
+//      configPanel.load();
+//      if (JOptionPane.showConfirmDialog(null, configPanel, "Hash Set Configuration", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+//          configPanel.store();
+//          populateHashSetComponents();
+//      } else {
+//          configPanel.cancel();
+//          populateHashSetComponents();
+//      }
+//  }//GEN-LAST:event_configureHashDatabasesButtonActionPerformed
     
-private class TagNamesListModel implements ListModel<String> {
+    private class TagNamesListModel implements ListModel<String> {
 
-    @Override
-    public int getSize() {
-        return tagNames.size();
-    }
+        @Override
+        public int getSize() {
+            return tagNames.size();
+        }
 	
 	@Override
-    public String getElementAt(int index) {
-        return tagNames.get(index).getDisplayName();
-    }
+        public String getElementAt(int index) {
+            return tagNames.get(index).getDisplayName();
+        }
 	
 	@Override
-    public void addListDataListener(ListDataListener l) {
-    }
+        public void addListDataListener(ListDataListener l) {
+        }
 	
 	@Override
-    public void removeListDataListener(ListDataListener l) {
-    }
+        public void removeListDataListener(ListDataListener l) {
+        }
     
- }
+    }
 
-// This class renders the items in the tag names JList component as JCheckbox components.
+    // This class renders the items in the tag names JList component as JCheckbox components.
     private class TagsNamesListCellRenderer extends JCheckBox implements ListCellRenderer<String> {
         private static final long serialVersionUID = 1L;
 
@@ -269,15 +290,15 @@ private class TagNamesListModel implements ListModel<String> {
         }
     }
 
-// Variables declaration - do not modify//GEN-BEGIN:variables
-private javax.swing.JButton chooseExpertWitnessReportButton;
-private javax.swing.JButton deselectAllButton;
-private javax.swing.JComboBox<Document> hashSetsComboBox;
-private javax.swing.JLabel jLabel1;
-private javax.swing.JLabel jLabel2;
-private javax.swing.JScrollPane jScrollPane1;
-private javax.swing.JButton selectAllButton;
-private javax.swing.JList<String> tagNamesListBox;
-// End of variables declaration//GEN-END:variables
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton chooseExpertWitnessReportButton;
+    private javax.swing.JButton deselectAllButton;
+    private javax.swing.JComboBox<Document> expertWitnessReportComboBox;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton selectAllButton;
+    private javax.swing.JList<String> tagNamesListBox;
+    // End of variables declaration//GEN-END:variables
     
 }

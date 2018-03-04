@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import org.sleuthkit.autopsy.report.GeneralReportModule;
 import org.sleuthkit.autopsy.report.ReportProgressPanel;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import org.sleuthkit.autopsy.report.ReportProgressPanel.ReportStatus;
 import org.sleuthkit.autopsy.casemodule.services.TagsManager;
 import org.sleuthkit.datamodel.ContentTag;
@@ -33,7 +32,6 @@ public class ForensicExpertWitnessReport implements GeneralReportModule
     public String normalizedBaseDir;
     public TagsManager tagsmanager = Case.getCurrentCase().getServices().getTagsManager();
     public ArrayList<ContentTag> TaggedFiles;
-    private HashSet<String> tagNamesFilter = new HashSet<>();  
     private List<TagName> tagNames;
     private static ForensicExpertWitnessReport instance;   
     private ForensicExpertWitnessReportConfigPanel configPanel;
@@ -57,7 +55,8 @@ public class ForensicExpertWitnessReport implements GeneralReportModule
     }
     
     @Override
-    public void generateReport(String baseReportDir, ReportProgressPanel progressPanel) {       
+    public void generateReport(String baseReportDir, ReportProgressPanel progressPanel) {  
+        
         // Declare a list of type ContentTag
         List<ContentTag> TaggedFiles = new ArrayList<ContentTag>();
         
