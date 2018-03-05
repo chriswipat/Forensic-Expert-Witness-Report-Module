@@ -1,13 +1,22 @@
-package ForensicExpertWitnessReport;
-
 /*
  * Class ForensicExpertWitnessReport.java of package ForensicExpertwitnessReport
  * 
- * Using this class you are able to ...
+ * Using this class you are able to retrieve files which have been tagged
+ * under a certain name in Autopsy, and add these files and their information
+ * into a structured table inside a given Microsoft Word Document.
+ * 
+ * This class was written for a final year project for
+ * the degree of Computer and Digital Forensics BSc (Hons),
+ * at Northumbria University in Newcastle, with the aim of
+ * aiding in automation, ease and effectivness of digital 
+ * forensic practitioners while conducting digital forensic
+ * investigations in Autopsy.
  * 
  * @author Chris Wipat
- * @version 21.02.2018
+ * @version 19.04.2018
  */
+
+package ForensicExpertWitnessReport;
 
 import javax.swing.JPanel;
 import org.sleuthkit.autopsy.report.GeneralReportModule;
@@ -35,9 +44,6 @@ public class ForensicExpertWitnessReport implements GeneralReportModule
     private List<TagName> tagNames;
     private static ForensicExpertWitnessReport instance;   
     private ForensicExpertWitnessReportConfigPanel configPanel;
-
-    public ForensicExpertWitnessReport() {
-    }
     
     @Override
     public String getName() {
