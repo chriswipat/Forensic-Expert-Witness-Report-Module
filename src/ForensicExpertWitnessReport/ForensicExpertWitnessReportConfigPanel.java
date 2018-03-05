@@ -1,13 +1,24 @@
-package ForensicExpertWitnessReport;
-
 /*
  * Class ForensicExpertWitnessReportConfigPanel.java of package ForensicExpertwitnessReport
  * 
- * Using this class you are able to ...
+ * Using this class you are able to display a graphical user interface (GUI)
+ * inside Autopsy which allows the user to select which tagged files he or
+ * she would like to report, and the forensic expert witness report he or she
+ * would like to report to. This further allows the selection of three included
+ * forensic expert witness report templates.
+ * 
+ * This class was written for a final year project for
+ * the degree of Computer and Digital Forensics BSc (Hons),
+ * at Northumbria University in Newcastle, with the aim of
+ * aiding in automation, ease and effectivness of digital 
+ * forensic practitioners while conducting digital forensic
+ * investigations in Autopsy.
  * 
  * @author Chris Wipat
- * @version 02.03.2018
+ * @version 19.04.2018
  */
+
+package ForensicExpertWitnessReport;
 
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
@@ -31,16 +42,14 @@ import javax.swing.JFileChooser;
 import com.aspose.words.Document;
 import java.net.URL;
 
-
 public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
 
-    // Declare instance variables
+    // Declare Instance Variables
     private final Map<String, Boolean> tagNameSelections = new LinkedHashMap<String, Boolean>();
     private final TagNamesListModel tagsNamesListModel = new TagNamesListModel();  
     private final TagsNamesListCellRenderer tagsNamesRenderer = new TagsNamesListCellRenderer();
     private List<TagName> tagNames;
-    private static final long serialVersionUID = 1L;   
-    private String selectedDocumentName;    
+    private static final long serialVersionUID = 1L; 
     private final String TemplateOne_name = "Pre-existing Template 1";
     private final String TemplateTwo_name = "Pre-existing Template 2";
     private final String TemplateThree_name = "Pre-existing Template 3";   
@@ -50,6 +59,7 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private String inputted_name;
     private String inputted_full_path;
     private Document inputted_doc = null;    
+    private String selectedDocumentName;    
     
     ForensicExpertWitnessReportConfigPanel() {
         initComponents();
@@ -213,11 +223,12 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         int result = fileChooser.showOpenDialog(null);
  
         if (result == JFileChooser.APPROVE_OPTION) {            
-            inputted_full_path = fileChooser.getSelectedFile().getAbsolutePath();
             inputted_name = fileChooser.getSelectedFile().getName();
+            inputted_full_path = fileChooser.getSelectedFile().getAbsolutePath();
             populateForensicExpertWitnessReports();
             createDocuments(inputted_full_path);
             expertWitnessReportComboBox.addItem(inputted_name); 
+            expertWitnessReportComboBox.setSelectedIndex(3);
         }    
     }
     
@@ -256,33 +267,6 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         }
         return null;
    }
-
-//    public static String getDataDir(Class c) {
-//        File dir = new File(System.getProperty("user.dir"));
-//        dir = new File(dir, "src");
-//        dir = new File(dir, "main");
-//        dir = new File(dir, "resources");
-//
-//        for (String s : c.getName().split("\\.")) {
-//            dir = new File(dir, s);
-//            if (dir.isDirectory() == false)
-//                dir.mkdir();
-//        }
-//        System.out.println("Using data directory: " + dir.toString());
-//        return dir.toString() + File.separator;
-//    }
- 
-//  private void configureHashDatabasesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configureHashDatabasesButtonActionPerformed
-//      HashLookupSettingsPanel configPanel = new HashLookupSettingsPanel();
-//      configPanel.load();
-//      if (JOptionPane.showConfirmDialog(null, configPanel, "Hash Set Configuration", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-//          configPanel.store();
-//          populateHashSetComponents();
-//      } else {
-//          configPanel.cancel();
-//          populateHashSetComponents();
-//      }
-//  }//GEN-LAST:event_configureHashDatabasesButtonActionPerformed
     
     private class TagNamesListModel implements ListModel<String> {
 
@@ -323,46 +307,7 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
             }
             return new JLabel();
         }
-    }
-    
-//    // This class renders the items in the forensic expert witness report combo list component
-//    private class ComboBoxRenderer implements ListCellRenderer {
-//        
-//        public ComboBoxRenderer() {        
-//        }
-//
-//        public Component getListCellRendererComponent(JList list,Object value,int index,boolean isSelected,boolean cellHasFocus) {
-//            setText("asdf");
-//            return this;
-//        }
-//        
-//    }
-    
-//    private class Document2 extends Document {
-//        private Document doc;
-//        private String name = "blah";
-//        
-//        private Document2(String name) throws Exception {
-//            this.name = name;
-//            try {             
-//                doc = new Document(name);
-//            } catch(Exception e){
-//                Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, "Failed to create new document", e);
-//            }  
-//        }
-//        
-//        @Override
-//        public String toString(){
-//            return name;
-//        }
-//        
-//        @Override
-//        public Document getDocument() {
-//           return doc;
-//        }
-//    }
-    
-    
+    }      
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton chooseExpertWitnessReportButton;
