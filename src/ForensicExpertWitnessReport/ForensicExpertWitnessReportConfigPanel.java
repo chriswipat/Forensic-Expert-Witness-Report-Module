@@ -9,8 +9,8 @@
  * 
  * This class was written for a final year project for
  * the degree of Computer and Digital Forensics BSc (Hons),
- * at Northumbria University in Newcastle, with the aim of
- * aiding in automation, ease and effectivness of digital 
+ * at Northumbria University in Newcastle. This project includes
+ * the aim of aiding in automation, ease and effectivness of digital 
  * forensic practitioners while conducting digital forensic
  * investigations in Autopsy.
  * 
@@ -41,8 +41,9 @@ import org.sleuthkit.datamodel.TskCoreException;
 import javax.swing.JFileChooser;
 import com.aspose.words.Document;
 import java.net.URL;
+import java.util.ArrayList;
 
-public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
+class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
 
     // Declare Instance Variables
     private final Map<String, Boolean> tagNameSelections = new LinkedHashMap<String, Boolean>();
@@ -59,8 +60,17 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private String inputted_name;
     private String inputted_full_path;
     private Document inputted_doc = null;    
-    private String selectedDocumentName;    
+    private String selectedDocumentName = null;
     
+    /**
+     * Constructor for objects of class ForensicExpertWitnessReportConfigPanel
+     * First and only Constructor.
+     * 
+     * Call methods which populate GUI components and display the GUI to the user.
+     * Call method to create objects for documents.
+     * 
+     * Includes Tag Name List Box, Forensic Expert Witness Report ComboBox & File Selector button. 
+     */
     ForensicExpertWitnessReportConfigPanel() {
         initComponents();
         populateTagNameComponents();
@@ -68,9 +78,19 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         createDocuments("");
     }
         
+    /**
+     * PopulateTagNameComponents method
+     * First Mutator Method.
+     * 
+     * Populates the Tag Name Components to the current tags which are 
+     * in use for the current case in Autopsy, as selected and created by
+     * the user. Set all of the tag name components in the list box to unselected
+     * until the user selects the tags of files in which he wants to include.
+     * 
+     */
     private void populateTagNameComponents() {
         
-        // Get the tag names in use for the current case.
+        // Get the tag names in use for the current case, using imported Case class.
         try {
             tagNames = Case.getCurrentCase().getServices().getTagsManager().getTagNamesInUse();
         } catch (TskCoreException ex) {
@@ -103,7 +123,14 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         });
     }
     
-    // Populate combobox with forensic expert witness reports
+    /**
+     * PopulateForensicExpertWitnessReports method
+     * Second Mutator Method.
+     * 
+     * Populate the ComboBox with the names of Forensic Expert Witness Reports,
+     * as have been declared earlier in the instance variables.
+     * 
+     */
     private void populateForensicExpertWitnessReports() {       
         expertWitnessReportComboBox.removeAllItems();        
         expertWitnessReportComboBox.addItem(TemplateOne_name); 
@@ -111,16 +138,37 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         expertWitnessReportComboBox.addItem(TemplateThree_name);
     } 
     
+    /**
+     * InitComponents method
+     * Third Mutator Method
+     * 
+     * Set the GUI of every component and display the GUI to the user.
+     * 
+     * Includes the following:
+     * 
+     * jLabel
+     * jScrollPane
+     * tagNamesListBox
+     * selectAllButton
+     * deselectAllButton 
+     * jLabel2
+     * expertWitnessReportComboBox   
+     * chooseExpertWitnessReportButton
+     */
     private void initComponents() {
 
+    // Initialize declared instance variables
+    jLabel1 = new javax.swing.JLabel();
     jScrollPane1 = new javax.swing.JScrollPane();
     tagNamesListBox = new javax.swing.JList<String>();
     selectAllButton = new javax.swing.JButton();
-    deselectAllButton = new javax.swing.JButton();
-    jLabel1 = new javax.swing.JLabel();
-    expertWitnessReportComboBox = new javax.swing.JComboBox<String>();    
-    chooseExpertWitnessReportButton = new javax.swing.JButton();
+    deselectAllButton = new javax.swing.JButton();   
     jLabel2 = new javax.swing.JLabel(); 
+    expertWitnessReportComboBox = new javax.swing.JComboBox<String>();    
+    chooseExpertWitnessReportButton = new javax.swing.JButton();    
+        
+    org.openide.awt.Mnemonics.setLocalizedText(jLabel1, "Export files tagged as:"); // NOI18N 
+    
     jScrollPane1.setViewportView(tagNamesListBox);
      
     org.openide.awt.Mnemonics.setLocalizedText(selectAllButton, "Select all"); // NOI18N
@@ -135,9 +183,9 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             deselectAllButtonActionPerformed(evt);
         }
-    });
- 
-    org.openide.awt.Mnemonics.setLocalizedText(jLabel1, "Export files tagged as:"); // NOI18N 
+    }); 
+    
+    org.openide.awt.Mnemonics.setLocalizedText(jLabel2, "Select Forensic Expert Witness Report"); // NOI18N
     
     expertWitnessReportComboBox.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -150,9 +198,7 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             chooseExpertWitnessReportButtonActionPerformed(evt);
         }
-    });
- 
-    org.openide.awt.Mnemonics.setLocalizedText(jLabel2, "Select Forensic Expert Witness Report"); // NOI18N
+    });    
  
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -196,25 +242,51 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
                 .addComponent(chooseExpertWitnessReportButton))
             .addContainerGap())
     );
-}// </editor-fold>//GEN-END:initComponents
+}
     
-    private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
+    /**
+     * 
+     * SelectAllButtonActionPerformed method
+     * Fourth Mutator Method.
+     * 
+     * On button pressed, for each tag name in the case, set it to selected.
+     * 
+     * @param evt 
+     */
+    private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {
         for (TagName tagName : tagNames) {
             tagNameSelections.put(tagName.getDisplayName(), Boolean.TRUE);
         }
         tagNamesListBox.repaint();
-    }//GEN-LAST:event_selectAllButtonActionPerformed
+    }//GEN-LAST:event_selectAllButtonActionPerformed 
  
-    private void expertWitnessReportComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hashSetsComboBoxActionPerformed
-        selectedDocumentName = (String)expertWitnessReportComboBox.getSelectedItem();
-    }//GEN-LAST:event_hashSetsComboBoxActionPerformed
- 
-    private void deselectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectAllButtonActionPerformed
+    /**
+     * 
+     * DeselectAllButtonActionPerformed Method
+     * Fifth Mutator Method.
+     * 
+     * On button pressed, for each tag name in the case, set it to un-selected.
+     * 
+     * @param evt 
+     */
+    private void deselectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {
         for (TagName tagName : tagNames) {
             tagNameSelections.put(tagName.getDisplayName(), Boolean.FALSE);
         }
         tagNamesListBox.repaint();
     }//GEN-LAST:event_deselectAllButtonActionPerformed
+    
+    /**
+     * ExpertWitnessReportComboBoxActionPerformed Method
+     * Sixth Mutator Method.
+     * 
+     * On Combo Box user selection, set the selected item to an instance variable.
+     * 
+     * @param evt 
+     */
+    private void expertWitnessReportComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
+        selectedDocumentName = (String)expertWitnessReportComboBox.getSelectedItem();
+    }//GEN-LAST:event_hashSetsComboBoxActionPerformed
 
     private void chooseExpertWitnessReportButtonActionPerformed(java.awt.event.ActionEvent evt) {
     
@@ -233,8 +305,8 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     }
     
     /**
-     * 
-     * Mutator x
+     * CreateDocuments
+     * Seventh Mutator Method.
      * 
      * Creates Document Objects for Forensic Expert Witness Reports
      * 
@@ -252,6 +324,18 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         }  
     }
     
+    /**
+     * GetSelectedDocument Method
+     * First Accessor Method.
+     * 
+     * Returns Document Objects of Forensic Expert Witness Reports
+     * 
+     * @return inputted_doc
+     * @return TemplateOne_doc
+     * @return TemplateTwo_doc
+     * @return TemplateThree_doc
+     * @return null
+     */
     public Document getSelectedDocument() {
         if (selectedDocumentName.equals(inputted_name)) {
             return inputted_doc;
@@ -265,9 +349,47 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         if (selectedDocumentName.equals(TemplateThree_name)) {
             return TemplateThree_doc;
         }
-        return null;
+        return TemplateOne_doc;
    }
     
+    /**
+     * GetSelectedDocumentName Method
+     * Second Accessor Method.
+     * 
+     * Returns the name of the selected document.
+     * 
+     * @return selectedDocumentName
+     */
+    public String getSelectedDocumentName() {
+        return selectedDocumentName;
+   }
+    
+    /**
+     * GetSelectedTagNames Method
+     * Third Accessor Method.
+     * 
+     * Returns the user selected tag names for files he wishes to extract.
+     * 
+     * @return selectedTagNames
+     */
+    public List<TagName> getSelectedTagNames() {
+        List<TagName> selectedTagNames = new ArrayList<TagName>();
+        for (TagName tagName : tagNames) {
+            if (tagNameSelections.get(tagName.getDisplayName())) {
+                selectedTagNames.add(tagName);
+            }
+        }
+        return selectedTagNames;
+    }
+    
+    /**
+     * Class TagNamesListModel of package ForensicExpertWitnessReport
+     * 
+     * Created in order to manage tag names provided by Autopsy in the
+     * current case, and selected by the user in the GUI. Implements
+     * ListModel.
+     * 
+     */
     private class TagNamesListModel implements ListModel<String> {
 
         @Override
@@ -289,8 +411,14 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         }
     
     }
-
-    // This class renders the items in the tag names JList component as JCheckbox components.
+    
+    /**
+     * Class TagsNamesListCellRenderer of package ForensicExpertWitnessReport
+     * 
+     * Created in order to render the items in the tag names JList component
+     * as JCheckbox components. Extends JCheckBox, Implements ListCellRenderer.
+     * 
+     */
     private class TagsNamesListCellRenderer extends JCheckBox implements ListCellRenderer<String> {
         private static final long serialVersionUID = 1L;
 
@@ -309,15 +437,15 @@ public class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         }
     }      
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton chooseExpertWitnessReportButton;
-    private javax.swing.JButton deselectAllButton;
-    private javax.swing.JComboBox<String> expertWitnessReportComboBox;
+    // GUI Variables declaration //GEN-BEGIN:variables    
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton selectAllButton;
+    private javax.swing.JScrollPane jScrollPane1;   
     private javax.swing.JList<String> tagNamesListBox = new JList<String>();
+    private javax.swing.JButton selectAllButton;
+    private javax.swing.JButton deselectAllButton;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JComboBox<String> expertWitnessReportComboBox;
+    private javax.swing.JButton chooseExpertWitnessReportButton;   
     // End of variables declaration//GEN-END:variables    
     
 }
