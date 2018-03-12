@@ -42,6 +42,10 @@ import javax.swing.JFileChooser;
 import com.aspose.words.Document;
 import java.net.URL;
 import java.util.ArrayList;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
 
@@ -61,6 +65,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private String inputted_full_path;
     private Document inputted_doc = null;    
     private String selectedDocumentName = null;
+    private String evidenceHeading = null;
     
     /**
      * Constructor for objects of class ForensicExpertWitnessReportConfigPanel
@@ -158,15 +163,17 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private void initComponents() {
 
     // Initialize declared instance variables
-    jLabel1 = new javax.swing.JLabel();
+    jLabel1 = new javax.swing.JLabel();    
     jScrollPane1 = new javax.swing.JScrollPane();
     tagNamesListBox = new javax.swing.JList<String>();
     selectAllButton = new javax.swing.JButton();
     deselectAllButton = new javax.swing.JButton();   
     jLabel2 = new javax.swing.JLabel(); 
     expertWitnessReportComboBox = new javax.swing.JComboBox<String>();    
-    chooseExpertWitnessReportButton = new javax.swing.JButton();    
-        
+    chooseExpertWitnessReportButton = new javax.swing.JButton();
+    jLabel3 = new javax.swing.JLabel();  
+    jTextField1 = new javax.swing.JTextField();      
+
     org.openide.awt.Mnemonics.setLocalizedText(jLabel1, "Export files tagged as:"); // NOI18N 
     
     jScrollPane1.setViewportView(tagNamesListBox);
@@ -198,7 +205,26 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             chooseExpertWitnessReportButtonActionPerformed(evt);
         }
-    });    
+    });
+    
+    org.openide.awt.Mnemonics.setLocalizedText(jLabel3, "Enter Microsoft Word heading or sub-heading e.g. \"Section 4. Evidence\": "); // NOI18N
+    
+    jTextField1.setText(""); // NOI18N
+    jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jTextField1ActionPerformed(evt);
+        }
+    });
+    jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+        @Override
+        public void keyReleased(java.awt.event.KeyEvent evt) {
+            jTextField1KeyReleased(evt);
+        }
+        @Override
+        public void keyTyped(java.awt.event.KeyEvent evt) {
+            jTextField1KeyTyped(evt);
+        }
+    });
  
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -207,19 +233,21 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         .addGroup(layout.createSequentialGroup()
             .addContainerGap()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jLabel3)    
                 .addComponent(jLabel2)
                 .addComponent(jLabel1)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE) 
                 .addGroup(layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)                        
                         .addComponent(jScrollPane1)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(expertWitnessReportComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(chooseExpertWitnessReportButton)))
+                            .addComponent(chooseExpertWitnessReportButton)))                            
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)    
                         .addComponent(deselectAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(selectAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(selectAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))               
             .addContainerGap())
     );
     layout.setVerticalGroup(
@@ -234,13 +262,17 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(deselectAllButton))
                 .addComponent(jScrollPane1))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)  
             .addComponent(jLabel2)
             .addGap(4, 4, 4)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(expertWitnessReportComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(expertWitnessReportComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)                
                 .addComponent(chooseExpertWitnessReportButton))
-            .addContainerGap())
+                .addGap(6, 6, 6)
+                .addComponent(jLabel3)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap()
+            )
     );
 }
     
@@ -303,6 +335,16 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
             expertWitnessReportComboBox.setSelectedIndex(3);
         }    
     }
+    
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed 
+    }//GEN-LAST:event_jTextField1ActionPerformed
+    
+    private void jTextField1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyTyped
+    }//GEN-LAST:event_jTextField1KeyTyped
+ 
+     private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
+         evidenceHeading = jTextField1.getText();
+     }//GEN-LAST:event_jTextField1KeyReleased
     
     /**
      * CreateDocuments
@@ -445,7 +487,9 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private javax.swing.JButton deselectAllButton;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JComboBox<String> expertWitnessReportComboBox;
-    private javax.swing.JButton chooseExpertWitnessReportButton;   
+    private javax.swing.JButton chooseExpertWitnessReportButton;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel jLabel3;
     // End of variables declaration//GEN-END:variables    
     
 }
