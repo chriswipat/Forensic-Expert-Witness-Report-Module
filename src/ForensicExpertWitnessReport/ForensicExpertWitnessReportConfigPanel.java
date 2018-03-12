@@ -209,7 +209,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     
     org.openide.awt.Mnemonics.setLocalizedText(jLabel3, "Enter Microsoft Word heading or sub-heading e.g. \"Section 4. Evidence\": "); // NOI18N
     
-    jTextField1.setText(""); // NOI18N
+    jTextField1.setText("Section 4. Evidence"); // NOI18N
     jTextField1.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             jTextField1ActionPerformed(evt);
