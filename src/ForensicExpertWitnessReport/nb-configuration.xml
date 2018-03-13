@@ -10,5 +10,6 @@ Without this configuration present, some functionality in the IDE may be limited
         <word>Accessor</word>
         <word>desc</word>
         <word>docx</word>
+        <word>field's</word>
     </spellchecker-wordlist>
 </project-shared-configuration>
