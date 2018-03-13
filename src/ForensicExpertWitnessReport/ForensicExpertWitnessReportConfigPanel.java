@@ -42,6 +42,10 @@ import javax.swing.JFileChooser;
 import com.aspose.words.Document;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.commons.io.FilenameUtils;
 
 class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
 
@@ -59,9 +63,11 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private Document TemplateThree_doc = null;
     private String inputted_name = null;
     private String inputted_full_path;
+    private String inputted_file_ext;
     private Document inputted_doc = null;    
     private String selectedDocumentName = null;
     private String evidenceHeading = "Section 4. Evidence";
+    private final Set<String> supported_extentions = new HashSet<String>();
     
     /**
      * Constructor for objects of class ForensicExpertWitnessReportConfigPanel
@@ -76,6 +82,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         initComponents();
         populateTagNameComponents();
         populateForensicExpertWitnessReports();
+        populateSupportedExtentions();
         createDocuments("");
     }
         
@@ -345,16 +352,24 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private void chooseExpertWitnessReportButtonActionPerformed(java.awt.event.ActionEvent evt) {
     
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);  
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("MS Word Documents", "DOC", "DOCX", "RTF", "DOT", "DOTX", "DOTM", "DOCM FlatOPC", "FlatOpcMacroEnabled", "FlatOpcTemplate", "FlatOpcTemplateMacroEnabled"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("OpenOffice Documents", "ODT", "OTT")); 
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("WordprocessingML", "XML"));
+        fileChooser.setAcceptAllFileFilterUsed(true);
         int result = fileChooser.showOpenDialog(null);
  
         if (result == JFileChooser.APPROVE_OPTION) {            
             inputted_name = fileChooser.getSelectedFile().getName();
             inputted_full_path = fileChooser.getSelectedFile().getAbsolutePath();
-            populateForensicExpertWitnessReports();
-            createDocuments(inputted_full_path);
-            expertWitnessReportComboBox.addItem(inputted_name); 
-            expertWitnessReportComboBox.setSelectedIndex(3);
+            inputted_file_ext = FilenameUtils.getExtension(inputted_name);
+            if (supported_extentions.contains(inputted_file_ext.toLowerCase()))
+            {
+                populateForensicExpertWitnessReports();
+                createDocuments(inputted_full_path);
+                expertWitnessReportComboBox.addItem(inputted_name); 
+                expertWitnessReportComboBox.setSelectedIndex(3);
+            }            
         }    
     }    
     /**
@@ -387,6 +402,21 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         } catch(Exception e){
             Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", e);
         }  
+    }
+    
+    /**
+     * PopulateSupportedExtentions
+     * Tenth Mutator Method.
+     * 
+     * Add supported forensic expert witness report file extentions
+     * 
+     */
+    private void populateSupportedExtentions () {
+        supported_extentions.add("doc"); supported_extentions.add("docx"); supported_extentions.add("rtf");
+        supported_extentions.add("dot"); supported_extentions.add("dotx"); supported_extentions.add("dotm");
+        supported_extentions.add("docm flatopc"); supported_extentions.add("flatopcmacroenabled"); supported_extentions.add("flatopctemplate");
+        supported_extentions.add("flatopctemplatemacroenabled"); supported_extentions.add("odt"); supported_extentions.add("ott");
+        supported_extentions.add("XML");
     }
     
     /**
