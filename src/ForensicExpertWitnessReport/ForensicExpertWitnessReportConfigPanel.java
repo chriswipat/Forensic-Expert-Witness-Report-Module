@@ -436,7 +436,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
             }
             
             // Declare new file object, set to User home / .ForensicExpertWitnessReportModule Directory + 1.docx            
-            file = new File(dir + "\\1.docx");
+            file = new File(dir + "\\" +document);
             
             // Create new FileOutputStream object as the created file object
             fos = new FileOutputStream(file);
