@@ -40,12 +40,16 @@ import org.sleuthkit.datamodel.TagName;
 import org.sleuthkit.datamodel.TskCoreException;
 import javax.swing.JFileChooser;
 import com.aspose.words.Document;
-import java.net.URL;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
 class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
 
@@ -61,13 +65,16 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private Document TemplateOne_doc = null;
     private Document TemplateTwo_doc = null;
     private Document TemplateThree_doc = null;
-    private String inputted_name = null;
+    private String inputted_name = "input";
     private String inputted_full_path;
     private String inputted_file_ext;
     private Document inputted_doc = null;    
-    private String selectedDocumentName = null;
-    private String evidenceHeading = "Section 4. Evidence";
+    private String selectedDocumentName = TemplateOne_name;
+    private String evidenceHeading = "Section 2. Evidence";
     private final Set<String> supported_extentions = new HashSet<String>();
+    private FileOutputStream fos = null;
+    private File file = null;
+    private File Dir = null;
     
     /**
      * Constructor for objects of class ForensicExpertWitnessReportConfigPanel
@@ -78,11 +85,12 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      * 
      * Includes Tag Name List Box, Forensic Expert Witness Report ComboBox & File Selector button. 
      */
-    ForensicExpertWitnessReportConfigPanel() {
+    ForensicExpertWitnessReportConfigPanel() {        
         initComponents();
         populateTagNameComponents();
         populateForensicExpertWitnessReports();
         populateSupportedExtentions();
+        extractDocument("Pre-existing-template-one.docx");
         createDocuments("");
     }
         
@@ -181,7 +189,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     jLabel3 = new javax.swing.JLabel();  
     jTextField1 = new javax.swing.JTextField();      
 
-    org.openide.awt.Mnemonics.setLocalizedText(jLabel1, "Export files tagged as:"); // NOI18N 
+   org.openide.awt.Mnemonics.setLocalizedText(jLabel1, "Export files tagged as:"); // NOI18N 
     
     jScrollPane1.setViewportView(tagNamesListBox);
      
@@ -320,21 +328,18 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      */
     private void expertWitnessReportComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
         selectedDocumentName = (String)expertWitnessReportComboBox.getSelectedItem();
-        if (null != selectedDocumentName) {
-            if (TemplateOne_name.equals(selectedDocumentName)) {
-                jTextField1.setText("Section 4. Evidence");
-            }
-            if (TemplateTwo_name.equals(selectedDocumentName)) {
-                jTextField1.setText("Section 5. Evidence");
-            }
-            if (TemplateThree_name.equals(selectedDocumentName)) {
-                jTextField1.setText("Section 3. Evidence");
-            }
-            if (selectedDocumentName.equals(inputted_name)) {
-                jTextField1.setText("...");
-            }
+        if (TemplateOne_name.equals(selectedDocumentName)) {
+            jTextField1.setText("Section 2. Evidence");
         }
-        
+        if (TemplateTwo_name.equals(selectedDocumentName)) {
+            jTextField1.setText("Section 5. Evidence");
+        }
+        if (TemplateThree_name.equals(selectedDocumentName)) {
+            jTextField1.setText("Section 3. Evidence");
+        }
+        if (selectedDocumentName.equals(inputted_name)) {
+            jTextField1.setText("...");
+        }        
     }//GEN-LAST:event_hashSetsComboBoxActionPerformed
 
     /**
@@ -394,10 +399,9 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      */
     private void createDocuments(String inputted) {
         try {
-            URL location = ForensicExpertWitnessReportConfigPanel.class.getProtectionDomain().getCodeSource().getLocation();
-            TemplateOne_doc = new Document(location.getFile() + "ForensicExpertWitnessReport\\" + "1.docx"); 
-            TemplateTwo_doc = new Document(location.getFile() + "ForensicExpertWitnessReport\\" + "2.docx"); 
-            TemplateThree_doc = new Document(location.getFile() + "ForensicExpertWitnessReport\\" + "3.docx"); 
+            TemplateOne_doc = new Document(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre-existing-template-one.docx");
+            TemplateTwo_doc = new Document(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre-existing-template-one.docx");
+            TemplateThree_doc = new Document(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre-existing-template-one.docx");
             inputted_doc = new Document(inputted);             
         } catch(Exception e){
             Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", e);
@@ -405,8 +409,69 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     }
     
     /**
-     * PopulateSupportedExtentions
+     * ExtractDocument
      * Tenth Mutator Method.
+     * 
+     * Extracts Pre-Existing Templates from NetBeans/JAR Package into User Home Directory.
+     * 
+     * @param inputted 
+     */
+    private void extractDocument(String document) {
+        try {
+            // Declare InputStream object as 1.docx from Java package / compiled JAR
+            InputStream in = getClass().getResourceAsStream(document);
+            
+            // Create new file object as Dir, set to user home / .ForensicExpertWitnessReportModule Directory
+            String dir = System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule";
+            Dir = new File(dir);
+            
+            // If directory doesn't exist, create it
+            if (!Dir.exists()) {
+                try{
+                    Dir.mkdir();
+                } 
+                catch(SecurityException se){
+                    Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Error creating folder " +Dir, se);
+                }        
+            }
+            
+            // Declare new file object, set to User home / .ForensicExpertWitnessReportModule Directory + 1.docx            
+            file = new File(dir + "\\1.docx");
+            
+            // Create new FileOutputStream object as the created file object
+            fos = new FileOutputStream(file);
+
+            //If the file doesn't exist, create the file
+	    if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            // Convert InputStream object / 1.docx to bytesArray
+            byte[] bytesArray = IOUtils.toByteArray(in);
+
+            // Write the bytesArray to the created file
+            fos.write(bytesArray);
+            fos.flush();            
+        } 
+        catch (IOException ioe) {
+            Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Error extracting Pre-existing Template " +document + " from JAR package", ioe);
+        } 
+        finally {
+            try {
+                if (fos != null) 
+                {
+                    fos.close();
+                }
+            }
+            catch (IOException ioe) {
+                System.out.println("Error in closing the Stream");
+            }
+        }
+    }
+    
+    /**
+     * PopulateSupportedExtentions
+     * Eleventh Mutator Method.
      * 
      * Add supported forensic expert witness report file extentions
      * 

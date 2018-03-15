@@ -23,6 +23,7 @@ import org.sleuthkit.autopsy.report.GeneralReportModule;
 import org.sleuthkit.autopsy.report.ReportProgressPanel;
 import org.sleuthkit.autopsy.casemodule.services.TagsManager;
 import org.sleuthkit.datamodel.AbstractFile;
+import org.sleuthkit.datamodel.File;
 import org.sleuthkit.datamodel.Content;
 import org.sleuthkit.datamodel.ContentTag;
 import java.util.ArrayList;
@@ -33,19 +34,21 @@ import org.sleuthkit.datamodel.TskCoreException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import org.sleuthkit.autopsy.coreutils.Logger;
-import com.aspose.words.Document;
+import com.aspose.words.*;
+import java.nio.file.Paths;
 
 public class ForensicExpertWitnessReport implements GeneralReportModule {
     
     // Declare Instance Variables
     private final String name = "Forensic Expert Witness Report";
     private final String desc = "Add tagged files into a forensic expert witness report.";
-    private String fullpath;
+    private String fullpath = "";
     public TagsManager tagsmanager = Case.getCurrentCase().getServices().getTagsManager();
     private List<TagName> tagNames;
     private static ForensicExpertWitnessReport instance;   
     private ForensicExpertWitnessReportConfigPanel configPanel;
-    private Document ForensicExpertWitnessReport = null;
+    private Document ForensicExpertWitnessReport_doc = null;
+    private String evidenceHeading = null;    
 
     /**
      * GetName Method
@@ -104,7 +107,10 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
      */
     @Override
     public void generateReport(String baseReportDir, ReportProgressPanel progressPanel) {
-   
+                
+        ForensicExpertWitnessReport_doc = configPanel.getSelectedDocument();
+        evidenceHeading = configPanel.getEvidenceHeading();
+
         progressPanel.setIndeterminate(false);
         progressPanel.start();
         progressPanel.updateStatusLabel("Adding files...");
@@ -115,20 +121,33 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
         for (TagName tagName : tagNames) {
             if (progressPanel.getStatus() == ReportProgressPanel.ReportStatus.CANCELED) {
                 break;
-            } 
-            progressPanel.updateStatusLabel("Adding " + tagName.getDisplayName() + " files to " + configPanel.getSelectedDocumentName() + "...");
+            }             
             try {
                 List<ContentTag> tags = tagsManager.getContentTagsByTagName(tagName);
                 // Set progress bar to the amount of files we are reporting
                 progressPanel.setMaximumProgress(tags.size());
+                progressPanel.updateStatusLabel("Adding \"" + tagName.getDisplayName() + "\" files to " + configPanel.getSelectedDocumentName() + "...");
                 for (ContentTag tag : tags) {
                     Content content = tag.getContent();
-                    if (content instanceof AbstractFile) {
+                    if (content instanceof AbstractFile && content instanceof File) {
                         
+                        progressPanel.updateStatusLabel("Adding " + tag.getContent().getName() + " from \"" + tagName.getDisplayName() + "\" to " + configPanel.getSelectedDocumentName() + "...");
+                       
+                        // Convert everything to Apache POI
+                        // Shit is backwards, try get it right way around
+                        // Add black theme
+                        
+                        // Set all variables to blank
+                        filename = "";
+                        Path = "";
+                        md5hash = "";
+                        comment = ""; 
+                        createdtime = "";
+                        modifiedtime = "";
+                        accessedtime = "";
+                                                
                         // Retrieve File Name
-                        if (null != tag.getContent().getName()) {
-                            filename = tag.getContent().getName();                                
-                        } 
+                        filename = tag.getContent().getName();                                
                         
                         // Retrieve File Path
                         if (null != ((AbstractFile) content).getLocalAbsPath()) {
@@ -138,31 +157,91 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                         } 
                         
                         // Retrieve MD5 Hash
-                        if (null != ((AbstractFile) content).getMd5Hash()) {
-                            md5hash = ((AbstractFile) content).getMd5Hash();                                
-                        }
+                        md5hash = ((AbstractFile) content).getMd5Hash();                                
                         
                         // Retrieve Created Time
-                        createdtime = ((AbstractFile) content).getCtime();   
+                        createdtime = ((File) content).getCtimeAsDate();   
                         
                         // Retrieve Modified Time
-                        modifiedtime = ((AbstractFile) content).getMtime();     
+                        modifiedtime = ((File) content).getMtimeAsDate();     
                         
                         // Retrieve Accessed Time
-                        accessedtime = ((AbstractFile) content).getAtime();  
+                        accessedtime = ((File) content).getAtimeAsDate();  
                         
-                        // Write these values to the document, under the correct heading:    
-                        ForensicExpertWitnessReport = configPanel.getSelectedDocument();
-                                              
+                        // Retrieve the comment
+                        comment = tag.getComment();
+
+                        if (ForensicExpertWitnessReport_doc != null) {
+                        
+                            // Write these values to the document, under the correct heading:
+                            DocumentBuilder builder = new DocumentBuilder(ForensicExpertWitnessReport_doc);
+                            
+                            if (evidenceHeading != null) {
+                                
+                                TablesAreNotBuilt = true;
+
+                                for (Section section : ForensicExpertWitnessReport_doc.getSections()) {
+                                    HeaderFooter header = section.getHeadersFooters().getByHeaderFooterType(HeaderFooterType.HEADER_FIRST);
+                                    if (header != null && header.getText().contains(evidenceHeading)) {
+                                        builder.moveTo(header);
+                                        buildTables(tag, builder, filename, Path, md5hash, comment, createdtime, modifiedtime, accessedtime);
+                                        TablesAreNotBuilt = false;
+                                    }
+                                    // Primary footer is the footer used for odd pages.
+                                    header = section.getHeadersFooters().getByHeaderFooterType(HeaderFooterType.HEADER_PRIMARY);
+                                    if (header != null) {
+                                        if (header.getText().contains(evidenceHeading)) {
+                                            builder.moveTo(header);
+                                            buildTables(tag, builder, filename, Path, md5hash, comment, createdtime, modifiedtime, accessedtime);
+                                            TablesAreNotBuilt = false;
+                                        }
+                                    }
+
+                                    header = section.getHeadersFooters().getByHeaderFooterType(HeaderFooterType.HEADER_EVEN);
+                                    if (header != null) {
+                                        if (header.getText().contains(evidenceHeading)) {
+                                            builder.moveTo(header);
+                                            buildTables(tag, builder, filename, Path, md5hash, comment, createdtime, modifiedtime, accessedtime);
+                                            TablesAreNotBuilt = false;
+                                        }
+                                    }
+                                }
+                                
+                                // If inputted Evidence Heading was not found, build tables at start of document
+                                if (TablesAreNotBuilt) {
+                                    if (count <1) {
+                                        builder.write("Unable to find evidence heading");
+                                    }
+                                    builder.insertParagraph();
+                                    buildTables(tag, builder, filename, Path, md5hash, comment, createdtime, modifiedtime, accessedtime);
+                                    count++;
+                                }
+                            }
+                            
+                            // If no evidence heading was inputted, build tables at start of document
+                            else {
+                                builder.write("No evidence heading inputted.");
+                                builder.insertParagraph();
+                                buildTables(tag, builder, filename, Path, md5hash, comment, createdtime, modifiedtime, accessedtime);
+                            }
+
+                            // Save the document to disk.
+                            try {
+                                ForensicExpertWitnessReport_doc.save(baseReportDir + "report.docx");
+                            } catch(Exception e){
+                                JOptionPane.showMessageDialog(null, "Unable to save report.", "Save Report Error", JOptionPane.ERROR_MESSAGE);
+                                Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to save report", e);
+                            }                         
+                        }
+                        
+                        // Increment the progressPanel every time a file is processed
+                        progressPanel.increment();  
                     }                      
                     else {
                         JOptionPane.showMessageDialog(null, "Unable to add " + tag.getContent().getName() + "to the report.", "Add to Report Error", JOptionPane.ERROR_MESSAGE);
                         failedExports.add(tag.getContent().getName());
                         break;
-                    }
-                    
-                    // Increment the progressPanel every time a file is processed
-                    progressPanel.increment();  
+                    }                                       
                 }
                 
             } catch (TskCoreException ex) {
@@ -183,9 +262,19 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
             }
             JOptionPane.showMessageDialog(null, errorMessage.toString(), "Hash Export Error", JOptionPane.ERROR_MESSAGE);
         }
+        
+        // Add the report to the Case, so it is shown in the tree                      
+        try {
+            fullpath = Paths.get(baseReportDir).normalize().toString();
+            Case.getCurrentCase().addReport(fullpath, name, getRelativeFilePath());            
+        } catch (TskCoreException ex) {
+            java.util.logging.Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         progressPanel.setIndeterminate(false);
         progressPanel.complete(ReportProgressPanel.ReportStatus.COMPLETE);
     }
+    
 
     @Override
     public JPanel getConfigurationPanel() {
@@ -201,14 +290,100 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
         return instance;
     }
     
-    // Report Variables declaration //GEN-BEGIN:variables  
-    private String filename = null;
-    private String Path = null;
-    private String md5hash = null;
-    private long createdtime;
-    private long modifiedtime;
-    private long accessedtime;
-    // End of variables declaration//GEN-END:variables      
+    public void buildTables(ContentTag tag, DocumentBuilder builder, String filename, String Path, String md5hash, String comment, String createdtime, String modifiedtime, String accessedtime) 
+    {
+        // We call this method to start building the table.
+        builder.startTable();
+	builder.insertCell();
+	builder.write("File Name");
+
+	// Build the second cell
+	builder.insertCell();
+	if (filename != null) {
+            builder.write(filename);
+	}
+	// Call the following method to end the row and start a new row.
+	builder.endRow();
+	
+	// Build the first cell of the second row.
+	builder.insertCell();
+	builder.write("File Path");
+	
+	// Build the second cell.
+	builder.insertCell();
+	if (Path != null) {
+            builder.write(Path);
+	}
+	builder.endRow();
+							
+	// Build the first cell of the third row.
+	builder.insertCell();
+	builder.write("Hash Value");
+	
+	// Build the second cell.
+	builder.insertCell();
+	if (md5hash != null) {
+            builder.write(md5hash);
+	}
+	else {
+            builder.write("Hashes have not been calculated. Please configure and run an appropriate ingest module.");
+	}
+	builder.endRow();
+							
+	// Build the first cell of the fourth row.
+	builder.insertCell();
+	builder.write("Created time");
+	
+	// Build the second cell.
+	builder.insertCell();
+        if (createdtime != null) {
+            builder.write(createdtime);
+        }
+	builder.endRow();
+							
+	// Build the first cell of the fifth row.
+	builder.insertCell();
+	builder.write("Modified time");
+	
+	// Build the second cell.
+	builder.insertCell();
+        if (modifiedtime != null) {
+            builder.write(modifiedtime);
+        }
+	builder.endRow();
+													
+	// Build the first cell of the sixth row.
+	builder.insertCell();
+	builder.write("Accessed time");
+	
+	// Build the second cell.
+	builder.insertCell();
+        if (accessedtime != null) {
+            builder.write(accessedtime);
+        }
+	builder.endRow();
+	
+	// Signal that we have finished building the table.
+	builder.endTable();
+							
+	if (tag.getComment() != null) {
+            builder.write(comment);
+            builder.insertParagraph();
+	}
+	if (tag.getComment()  != null && filename != null) {
+            builder.write("This table shows information about \"" +filename + "\"");
+            builder.insertParagraph();
+	}
+    }
     
-    
+    // Declare Instance Variables
+    private String filename;
+    private String Path;
+    private String md5hash;
+    private String comment;
+    private String createdtime;
+    private String modifiedtime;
+    private String accessedtime;
+    private boolean TablesAreNotBuilt;
+    private int count = 0;
 }
