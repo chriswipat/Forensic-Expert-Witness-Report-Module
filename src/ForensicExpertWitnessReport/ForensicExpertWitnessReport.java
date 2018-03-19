@@ -393,6 +393,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                             // Create first row of table // File Name
                             XWPFTableRow tableRowOne = table.getRow(0);
                             tableRowOne.getCell(0).setText("File Name");
+                            tableRowOne.getCell(0).setColor("000000");
                             tableRowOne.addNewTableCell();
                             if (filename != null) {
                                 tableRowOne.getCell(1).setText(filename);
@@ -401,6 +402,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                             // Create second row of table // File Path
                             XWPFTableRow tableRowTwo = table.createRow();
                             tableRowTwo.getCell(0).setText("File Path");
+                            tableRowTwo.getCell(0).setColor("000000");
                             if (Path != null) {
                                 tableRowTwo.getCell(1).setText(Path);
                             }
@@ -408,6 +410,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                             // Create third row of table // Hash Value
                             XWPFTableRow tableRowThree = table.createRow();
                             tableRowThree.getCell(0).setText("Hash Value");
+                            tableRowThree.getCell(0).setColor("000000");
                             if (md5hash != null) {
                                 tableRowThree.getCell(1).setText(md5hash);
                             }
@@ -418,6 +421,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                             // Create fourth row of table // Created time
                             XWPFTableRow tableRowFour = table.createRow();
                             tableRowFour.getCell(0).setText("Created time");
+                            tableRowFour.getCell(0).setColor("000000");
                             if (Path != null) {
                                 tableRowFour.getCell(1).setText(createdtime);
                             }
@@ -425,6 +429,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                             // Create fifth row of table // Modified time
                             XWPFTableRow tableRowFive = table.createRow();
                             tableRowFive.getCell(0).setText("Modified time");
+                            tableRowFive.getCell(0).setColor("000000");
                             if (Path != null) {
                                 tableRowFive.getCell(1).setText(modifiedtime);
                             }
@@ -432,6 +437,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                             // Create sixth row of table // Accessed time
                             XWPFTableRow tableRowSix = table.createRow();
                             tableRowSix.getCell(0).setText("Accessed time");
+                            tableRowSix.getCell(0).setColor("000000");
                             if (Path != null) {
                                 tableRowSix.getCell(1).setText(accessedtime);
                             }
