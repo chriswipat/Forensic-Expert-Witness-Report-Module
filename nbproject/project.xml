@@ -60,24 +60,48 @@
             </module-dependencies>
             <public-packages/>
             <class-path-extension>
-                <runtime-relative-path>ext/aspose-words-18.2-jdk16.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/aspose-words-18.2-jdk16.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/org-openide-awt.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/org-openide-awt.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/resolver.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/resolver.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/xmlpublic.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/xmlpublic.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/xbean_xpath.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/xbean_xpath.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/poi-scratchpad-3.17.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/poi-scratchpad-3.17.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/poi-3.17.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/poi-3.17.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/junit-4.12.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/junit-4.12.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/jsr173_1.0_api.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jsr173_1.0_api.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/poi-ooxml-3.17.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/poi-ooxml-3.17.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/xmlbeans-2.3.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/xmlbeans-2.3.0.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/xmlbeans-qname.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/xmlbeans-qname.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

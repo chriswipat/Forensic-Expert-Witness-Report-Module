@@ -8,6 +8,7 @@ Without this configuration present, some functionality in the IDE may be limited
 -->
     <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
         <word>Accessor</word>
+        <word>Apose</word>
         <word>desc</word>
         <word>docx</word>
     </spellchecker-wordlist>
