@@ -1,5 +1,5 @@
 /*
- * Class ForensicExpertWitnessReportConfigPanel.java of package ForensicExpertwitnessReport
+ * Class ForensicExpertWitnessReportConfigPanel.java of package ForensicExpertWitnessReport
  * 
  * Using this class you are able to display a graphical user interface (GUI)
  * inside Autopsy which allows the user to select which tagged files he or
@@ -66,7 +66,6 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private final String TemplateTwo_name = "Pre-existing Template 2";  
     private XWPFDocument TemplateOne_doc = null;
     private XWPFDocument TemplateTwo_doc = null;
-    private XWPFDocument TemplateThree_doc = null;
     private XWPFDocument inputted_doc = null; 
     private String inputted_name = "input";
     private String inputted_full_path;
@@ -82,8 +81,9 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      * Constructor for objects of class ForensicExpertWitnessReportConfigPanel
      * First and only Constructor.
      * 
-     * Call methods which populate GUI components and display the GUI to the user.
-     * Call method to create objects for documents.
+     * Call methods which populate GUI components and display the GUI to the user,
+     * extract the documents from the compiled JAR after NBM installation, and the method
+     * to create the document objects.
      * 
      * Includes Tag Name List Box, Forensic Expert Witness Report ComboBox & File Selector button. 
      */
@@ -179,36 +179,36 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private void initComponents() {
 
     // Initialize declared instance variables
-    jLabel1 = new javax.swing.JLabel();    
+    jLabel1 = new javax.swing.JLabel();
     jScrollPane1 = new javax.swing.JScrollPane();
     tagNamesListBox = new javax.swing.JList<String>();
     selectAllButton = new javax.swing.JButton();
-    deselectAllButton = new javax.swing.JButton();   
-    jLabel2 = new javax.swing.JLabel(); 
-    expertWitnessReportComboBox = new javax.swing.JComboBox<String>();    
+    deselectAllButton = new javax.swing.JButton();
+    jLabel2 = new javax.swing.JLabel();
+    expertWitnessReportComboBox = new javax.swing.JComboBox<String>();
     chooseExpertWitnessReportButton = new javax.swing.JButton();
-    jLabel3 = new javax.swing.JLabel();  
-    jTextField1 = new javax.swing.JTextField();      
+    jLabel3 = new javax.swing.JLabel();
+    jTextField1 = new javax.swing.JTextField();
 
-   org.openide.awt.Mnemonics.setLocalizedText(jLabel1, "Export files tagged as:"); // NOI18N 
+   org.openide.awt.Mnemonics.setLocalizedText(jLabel1, "Export files tagged as:");
     
     jScrollPane1.setViewportView(tagNamesListBox);
      
-    org.openide.awt.Mnemonics.setLocalizedText(selectAllButton, "Select all"); // NOI18N
+    org.openide.awt.Mnemonics.setLocalizedText(selectAllButton, "Select all");
     selectAllButton.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             selectAllButtonActionPerformed(evt);
         }
     });
  
-    org.openide.awt.Mnemonics.setLocalizedText(deselectAllButton, "Deslect all"); // NOI18N
+    org.openide.awt.Mnemonics.setLocalizedText(deselectAllButton, "Deslect all");
     deselectAllButton.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             deselectAllButtonActionPerformed(evt);
         }
-    }); 
+    });
     
-    org.openide.awt.Mnemonics.setLocalizedText(jLabel2, "Select Forensic Expert Witness Report"); // NOI18N
+    org.openide.awt.Mnemonics.setLocalizedText(jLabel2, "Select Forensic Expert Witness Report");
     
     expertWitnessReportComboBox.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -216,16 +216,16 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         }
     });
  
-    org.openide.awt.Mnemonics.setLocalizedText(chooseExpertWitnessReportButton, "Choose file"); // NOI18N
+    org.openide.awt.Mnemonics.setLocalizedText(chooseExpertWitnessReportButton, "Choose file");
     chooseExpertWitnessReportButton.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             chooseExpertWitnessReportButtonActionPerformed(evt);
         }
     });
     
-    org.openide.awt.Mnemonics.setLocalizedText(jLabel3, "Enter Heading or Sub-heading:"); // NOI18N
+    org.openide.awt.Mnemonics.setLocalizedText(jLabel3, "Enter Heading or Sub-heading:");
     
-    jTextField1.setText(evidenceHeading); // NOI18N
+    jTextField1.setText(evidenceHeading);
     jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
         @Override
         public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -338,7 +338,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         if (selectedDocumentName != null && inputted_name != null) {
             if (selectedDocumentName.equals(inputted_name)) {
                 jTextField1.setText("...");
-            }   
+            }
         }
              
     }//GEN-LAST:event_hashSetsComboBoxActionPerformed
@@ -374,10 +374,10 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
                 populateForensicExpertWitnessReports();
                 createDocuments(inputted_full_path);
                 expertWitnessReportComboBox.addItem(inputted_name); 
-                expertWitnessReportComboBox.setSelectedIndex(3);
+                expertWitnessReportComboBox.setSelectedIndex(2);
             }            
         }    
-    }    
+    }
     /**
      * JTextField1KeyReleased Method
      * Eighth Mutator Method.
@@ -401,16 +401,14 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private void createDocuments(String inputted_full_path) {
         try {
             TemplateOne_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_one.docx"));
-            TemplateTwo_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_one.docx"));
-            TemplateThree_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_one.docx"));            
-
+            TemplateTwo_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_one.docx"));  
             if (inputted_full_path != null) {
                 inputted_doc = new XWPFDocument(OPCPackage.open(inputted_full_path));
             }
-        } catch(IOException e){
+        } catch(IOException e) {
             Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", e);
-        } catch (InvalidFormatException e) {
-            Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", e);
+        } catch (InvalidFormatException ex) {
+            Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", ex);
         }
     }
     
@@ -418,7 +416,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      * ExtractDocument
      * Tenth Mutator Method.
      * 
-     * Extracts Pre-Existing Templates from NetBeans/JAR Package into User Home Directory.
+     * Extracts Pre-Existing Templates from NetBeans/JAR Package into the User Home Directory.
      * 
      * @param inputted 
      */
@@ -479,7 +477,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      * PopulateSupportedExtentions
      * Eleventh Mutator Method.
      * 
-     * Add supported forensic expert witness report file extentions
+     * Adds supported forensic expert witness report file extentions
      * 
      */
     private void populateSupportedExtentions () {
@@ -500,7 +498,6 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      * @return TemplateOne_doc
      * @return TemplateTwo_doc
      * @return TemplateThree_doc
-     * @return null
      */
     public XWPFDocument getSelectedDocument() {
         if (selectedDocumentName.equals(inputted_name)) {
