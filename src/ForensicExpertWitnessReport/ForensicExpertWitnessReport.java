@@ -132,50 +132,62 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
         
         // Create arraylist containing the failed to report tagged files
         ArrayList<String> failedExports = new ArrayList<String>();
-        
+             
         for (TagName tagName : tagNames) {
             if (progressPanel.getStatus() == ReportProgressPanel.ReportStatus.CANCELED) {
+                break;
+            }
+            if (ForensicExpertWitnessReport_doc == null) {
+                JOptionPane.showMessageDialog(null, "Unable to add tagged files to the report.", "Inputted Document Error", JOptionPane.ERROR_MESSAGE);
+                break;
+            }
+            if (evidenceHeading == null || (evidenceHeading.isEmpty())) {
+                JOptionPane.showMessageDialog(null, "Please enter an evidence heading", "Inputted Evidence Heading Error", JOptionPane.ERROR_MESSAGE);
+                break;
+            }
+            if (evidenceHeading.length() < 3) {
+                JOptionPane.showMessageDialog(null, "Evidence headings must be 3 characters or longer.", "Inputted Evidence Heading Error", JOptionPane.ERROR_MESSAGE);
                 break;
             }
             try {
                 // Request the content of the tagged files by their name and set to a list
                 List<ContentTag> tags = tagsManager.getContentTagsByTagName(tagName);
-                
+
                 // Set progress bar to the amount of files we are reporting
                 progressPanel.setMaximumProgress(tags.size());
                 progressPanel.updateStatusLabel("Adding \"" + tagName.getDisplayName() + "\" files to " + configPanel.getSelectedDocumentName() + "...");               
 
-                // Retrieve the paragraphs from the user inputted forensic expert witness report
-                 if (ForensicExpertWitnessReport_doc != null) 
-                 {
-                    // Convert arraylist to array
-                    paragraphlist = ForensicExpertWitnessReport_doc.getParagraphs();                    
-                    paragraphs = new XWPFParagraph[paragraphlist.size()]; 
-                    
-                    for(int i=0; i<paragraphlist.size(); i++) {
-                        paragraphs[i] = paragraphlist.get(i);
-                    }
-                 }
-                 
+                // Retrieve the paragraphs from the user inputted forensic expert witness report  
+                paragraphlist = ForensicExpertWitnessReport_doc.getParagraphs();
+
+                // Convert arraylist to array
+                paragraphs = new XWPFParagraph[paragraphlist.size()]; 
+                for(int i=0; i<paragraphlist.size(); i++) {
+                    paragraphs[i] = paragraphlist.get(i);
+                }
+
                 // Declare array of tables to the amount of tagged files retrieved
                 tables = new XWPFTable[tags.size()];
-                
+
                 // Count the amount of tables we are creating
                 count = 0;
-                
+
+                // Count the amount of evidence headings found
+                heading_count = 0;
+
                 // For each tagged file, do the following                
                 for (ContentTag tag : tags) {
-                    
+
                     // Retrieve the content of the tagged file
                     Content content = tag.getContent();
-                    
+
                     // If the content object relating to this tagged file is an instance of AbstractFile class, do the following.
                     if (content instanceof AbstractFile) {
-                        
+
                         // Update the status label to the current tagged file we are reporting.
                         progressPanel.updateStatusLabel("Adding " + tag.getContent().getName() + " from \"" + tagName.getDisplayName() + "\" to " + configPanel.getSelectedDocumentName() + "...");
-                        
-                        // Set all variables to blank, to eradicate duplicate entires in table.
+
+                        // Set all variables to blank, to eradicate duplicate entries in table.
                         filename = "";
                         Path = "";
                         md5hash = "";
@@ -183,65 +195,49 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                         createdtime = "";
                         modifiedtime = "";
                         accessedtime = "";
-                                                
+
                         // Retrieve the File Name, set to variable
                         filename = tag.getContent().getName();                                
-                        
+
                         // Retrieve File Path
                         if (null != ((AbstractFile) content).getLocalAbsPath()) {
                             Path = ((AbstractFile) content).getLocalAbsPath();                                
                         } else {
                             Path = tag.getContent().getUniquePath();                                
                         } 
-                        
+
                         // Retrieve MD5 Hash
                         md5hash = ((AbstractFile) content).getMd5Hash();                                
-                        
+
                         // Retrieve Created Time
                         createdtime = ((AbstractFile) content).getCtimeAsDate();   
-                        
+
                         // Retrieve Modified Time
                         modifiedtime = ((AbstractFile) content).getMtimeAsDate();     
-                        
+
                         // Retrieve Accessed Time
                         accessedtime = ((AbstractFile) content).getAtimeAsDate();  
-                        
+
                         // Retrieve the comment
                         if (tag.getComment() != null) {
                             comment = tag.getComment().trim();
-                        }
-                        
-                        // Write to given document
-                        if (ForensicExpertWitnessReport_doc != null)
-                        {
-                            // Build the Tables with the retrieved metadata information
-                            buildTables(tags, filename, Path, md5hash, comment, createdtime, modifiedtime, accessedtime);
-                  
-                            // Write the Document in file system
-                            try {
-                                out = new FileOutputStream(new File(baseReportDir + "report.docx"));
-                            } catch(FileNotFoundException e){
-                                JOptionPane.showMessageDialog(null, "Unable to create new report.", "Create New Report Error", JOptionPane.ERROR_MESSAGE);
-                                Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create new report", e);
-                            }
+                        }                        
 
-                            // Save the document to disk.                            
-                            if(out != null) {
-                                try {
-                                    ForensicExpertWitnessReport_doc.write(out);
-                                    out.close();
-                                } catch(IOException e){
-                                    JOptionPane.showMessageDialog(null, "Unable to save report.", "Save Report Error", JOptionPane.ERROR_MESSAGE);
-                                    Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to save report", e);
-                                }
-                            }
-                        }
-                        // Display Inputted Document Error if we cannot write the tagged file to report because the inputted document is null.
-                        else {
-                            JOptionPane.showMessageDialog(null, "Unable to add " + tag.getContent().getName() + "to the report.", "Inputted Document Error", JOptionPane.ERROR_MESSAGE);
-                            failedExports.add(tag.getContent().getName());
-                        }
+                        // Build the Tables with the retrieved metadata information
+                        buildTables(tags, filename, Path, md5hash, comment, createdtime, modifiedtime, accessedtime);
                         
+                        // Display error if the evidence heading was not found & break loop
+                        if (heading_count == 0) {
+                            JOptionPane.showMessageDialog(null, "Unable to find evidence heading", "Inputted Evidence Heading Error", JOptionPane.ERROR_MESSAGE);
+                            break;
+                        }
+
+                        // Display error if the evidence heading was not found & break loop
+                        if (heading_count > 1 ) {
+                            JOptionPane.showMessageDialog(null, "Evidence headings must be unique.", "Multiple entities of headings found", JOptionPane.ERROR_MESSAGE);
+                            break;
+                        }
+
                         // Increment the progressPanel every time a file is processed
                         progressPanel.increment();  
                     }
@@ -250,15 +246,33 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                     else {
                         JOptionPane.showMessageDialog(null, "Unable to add " + tag.getContent().getName() + "to the report.", "Add to Report Error", JOptionPane.ERROR_MESSAGE);
                         failedExports.add(tag.getContent().getName());
-                        break;
                     }
                 }
-            
+
             // Throw exception if we cannot retrieve the content of any of the tagged files
             } catch (TskCoreException ex) {
                 Logger.getLogger(ForensicExpertWitnessReport.class.getName()).log(Level.SEVERE, "Error adding files", ex);
                 JOptionPane.showMessageDialog(null, "Error getting selected tags for case.", "File Export Error", JOptionPane.ERROR_MESSAGE);
             }
+            
+            // Write the Document in file system
+            try {
+                out = new FileOutputStream(new File(baseReportDir + "report.docx"));
+            } catch(FileNotFoundException e){
+                JOptionPane.showMessageDialog(null, "Unable to create new report.", "Create New Report Error", JOptionPane.ERROR_MESSAGE);
+                Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create new report", e);
+            }
+
+            // Save the document to disk.                            
+            if(out != null) {
+                try {
+                    ForensicExpertWitnessReport_doc.write(out);
+                    out.close();
+                } catch(IOException e){
+                    JOptionPane.showMessageDialog(null, "Unable to save report.", "Save Report Error", JOptionPane.ERROR_MESSAGE);
+                    Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to save report", e);
+                }
+            }            
         }
         // Manage the failed exports and display to user
         if (!failedExports.isEmpty()) {
@@ -345,137 +359,139 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
         if(paragraphs != null) {
             for(int i=0; i<paragraphs.length; i++)
             {
-                if(evidenceHeading != null) {
+                // If the paragraph contains the evidence heading
+                if (paragraphs[i].getText() != null && paragraphs[i].getText().contains(evidenceHeading)) {
 
-                    // If the paragraph contains the evidence heading
-                    if (paragraphs[i].getText() != null && paragraphs[i].getText().contains(evidenceHeading)) {
-                        
-                        // Make sure count is running properly
-                        if (count<=tags.size()) {
+                    // Count the amount of headings found
+                    heading_count++;
+                    
+                    // If multiple evidence headings are found, break this loop
+                    if(heading_count > 1) {
+                        break;
+                    }
 
-                            /**
-                             * & If this is the first table created, set the cursor to directly after the paragraph object
-                             * which contains the evidence heading, and create the table at this point. 
-                             * 
-                             * Add the table to an array of tables which we have created.
-                             */             
-                            if(count <1) {
-                                cursor = paragraphs[i].getCTP().newCursor();
+                    // Make sure count is running properly
+                    if (count<=tags.size()) {
+
+                        /**
+                         * & If this is the first table created, set the cursor to directly after the paragraph object
+                         * which contains the evidence heading, and create the table at this point. 
+                         * 
+                         * Add the table to an array of tables which we have created.
+                         */             
+                        if(count <1) {
+                            cursor = paragraphs[i].getCTP().newCursor();
+                            cursor.toNextSibling();
+                            table = ForensicExpertWitnessReport_doc.insertNewTbl(cursor);
+                            tables[count] = table;
+                        }
+
+                        /**
+                         * If this is not the first table created, set the cursor directly to after the previous
+                         * created table, and create the table at this point.
+                         * 
+                         * Add the table to an array of tables which we have created
+                         */                
+                        else {
+                            // Set cursor below the previous comment after previous table, if it exists
+                            if(para !=  null) {
+                                cursor = para.getCTP().newCursor();
                                 cursor.toNextSibling();
                                 table = ForensicExpertWitnessReport_doc.insertNewTbl(cursor);
                                 tables[count] = table;
                             }
-
-                            /**
-                             * If this is not the first table created, set the cursor directly to after the previous
-                             * created table, and create the table at this point.
-                             * 
-                             * Add the table to an array of tables which we have created
-                             */                
+                            // If it doesn't exist, set the cursor to 2 siblings after previous table
                             else {
-                                // Set cursor below the previous comment after previous table, if it exists
-                                if(para !=  null) {
-                                    cursor = para.getCTP().newCursor();
-                                    cursor.toNextSibling();
-                                    table = ForensicExpertWitnessReport_doc.insertNewTbl(cursor);
-                                    tables[count] = table;
-                                }
-                                // If it doesn't exist, set the cursor to 2 siblings after previous table
-                                else {
-                                    cursor = tables[(count-1)].getCTTbl().newCursor();
-                                    cursor.toNextSibling();
-                                    cursor.toNextSibling();
-                                    table = ForensicExpertWitnessReport_doc.insertNewTbl(cursor);
-                                    tables[count] = table;
-                                }                                
-                            }                            
+                                cursor = tables[(count-1)].getCTTbl().newCursor();
+                                cursor.toNextSibling();
+                                cursor.toNextSibling();
+                                table = ForensicExpertWitnessReport_doc.insertNewTbl(cursor);
+                                tables[count] = table;
+                            }                                
+                        }                            
 
-                            // Create first row of table // File Name
-                            XWPFTableRow tableRowOne = table.getRow(0);
-                            tableRowOne.getCell(0).setText("File Name");
-                            tableRowOne.getCell(0).setColor("000000");
-                            tableRowOne.addNewTableCell();
-                            if (filename != null) {
-                                tableRowOne.getCell(1).setText(filename);
-                            }
-
-                            // Create second row of table // File Path
-                            XWPFTableRow tableRowTwo = table.createRow();
-                            tableRowTwo.getCell(0).setText("File Path");
-                            tableRowTwo.getCell(0).setColor("000000");
-                            if (Path != null) {
-                                tableRowTwo.getCell(1).setText(Path);
-                            }
-
-                            // Create third row of table // Hash Value
-                            XWPFTableRow tableRowThree = table.createRow();
-                            tableRowThree.getCell(0).setText("Hash Value");
-                            tableRowThree.getCell(0).setColor("000000");
-                            if (md5hash != null) {
-                                tableRowThree.getCell(1).setText(md5hash);
-                            }
-                            else {
-                                tableRowThree.getCell(1).setText("Hashes have not been calculated. Please configure and run an appropriate ingest module.");
-                            }
-
-                            // Create fourth row of table // Created time
-                            XWPFTableRow tableRowFour = table.createRow();
-                            tableRowFour.getCell(0).setText("Created time");
-                            tableRowFour.getCell(0).setColor("000000");
-                            if (Path != null) {
-                                tableRowFour.getCell(1).setText(createdtime);
-                            }
-
-                            // Create fifth row of table // Modified time
-                            XWPFTableRow tableRowFive = table.createRow();
-                            tableRowFive.getCell(0).setText("Modified time");
-                            tableRowFive.getCell(0).setColor("000000");
-                            if (Path != null) {
-                                tableRowFive.getCell(1).setText(modifiedtime);
-                            }
-
-                            // Create sixth row of table // Accessed time
-                            XWPFTableRow tableRowSix = table.createRow();
-                            tableRowSix.getCell(0).setText("Accessed time");
-                            tableRowSix.getCell(0).setColor("000000");
-                            if (Path != null) {
-                                tableRowSix.getCell(1).setText(accessedtime);
-                            }
-
-                            // Create paragraph after table // Comment
-                            cursor = table.getCTTbl().newCursor();
-                            cursor.toNextSibling();
-                            if (cursor != null) {
-                                para = ForensicExpertWitnessReport_doc.insertNewParagraph(cursor);                                
-                            }
-                            if ( para != null) {
-                                if (comment != null && !(comment.isEmpty())) {                    
-                                    run = para.createRun();
-                                    run.setText(comment);
-                                }
-                                if ((comment == null || comment.isEmpty()) && filename != null) {
-                                    run = para.createRun();
-                                    run.setText("This table shows information about \"" +filename + "\"");
-                                }  
-                            }
-                            
-                            // Create gap before each table insert
-                            cursor = table.getCTTbl().newCursor();
-                            if (cursor != null) {
-                                para2 = ForensicExpertWitnessReport_doc.insertNewParagraph(cursor);                               
-                            }
-                            if (para2 != null) {
-                                run2 = para2.createRun();
-                                run2.setText("");
-                            }
-
-                            // Increment the amount of tables created
-                            count++;
+                        // Create first row of table // File Name
+                        XWPFTableRow tableRowOne = table.getRow(0);
+                        tableRowOne.getCell(0).setText("File Name");
+                        tableRowOne.getCell(0).setColor("000000");
+                        tableRowOne.addNewTableCell();
+                        if (filename != null) {
+                            tableRowOne.getCell(1).setText(filename);
                         }
+
+                        // Create second row of table // File Path
+                        XWPFTableRow tableRowTwo = table.createRow();
+                        tableRowTwo.getCell(0).setText("File Path");
+                        tableRowTwo.getCell(0).setColor("000000");
+                        if (Path != null) {
+                            tableRowTwo.getCell(1).setText(Path);
+                        }
+
+                        // Create third row of table // Hash Value
+                        XWPFTableRow tableRowThree = table.createRow();
+                        tableRowThree.getCell(0).setText("Hash Value");
+                        tableRowThree.getCell(0).setColor("000000");
+                        if (md5hash != null) {
+                            tableRowThree.getCell(1).setText(md5hash);
+                        }
+                        else {
+                            tableRowThree.getCell(1).setText("Hashes have not been calculated. Please configure and run an appropriate ingest module.");
+                        }
+
+                        // Create fourth row of table // Created time
+                        XWPFTableRow tableRowFour = table.createRow();
+                        tableRowFour.getCell(0).setText("Created time");
+                        tableRowFour.getCell(0).setColor("000000");
+                        if (Path != null) {
+                            tableRowFour.getCell(1).setText(createdtime);
+                        }
+
+                        // Create fifth row of table // Modified time
+                        XWPFTableRow tableRowFive = table.createRow();
+                        tableRowFive.getCell(0).setText("Modified time");
+                        tableRowFive.getCell(0).setColor("000000");
+                        if (Path != null) {
+                            tableRowFive.getCell(1).setText(modifiedtime);
+                        }
+
+                        // Create sixth row of table // Accessed time
+                        XWPFTableRow tableRowSix = table.createRow();
+                        tableRowSix.getCell(0).setText("Accessed time");
+                        tableRowSix.getCell(0).setColor("000000");
+                        if (Path != null) {
+                            tableRowSix.getCell(1).setText(accessedtime);
+                        }
+
+                        // Create paragraph after table // Comment
+                        cursor = table.getCTTbl().newCursor();
+                        cursor.toNextSibling();
+                        if (cursor != null) {
+                            para = ForensicExpertWitnessReport_doc.insertNewParagraph(cursor);                                
+                        }
+                        if ( para != null) {
+                            if (comment != null && !(comment.isEmpty())) {                    
+                                run = para.createRun();
+                                run.setText(comment);
+                            }
+                            if ((comment == null || comment.isEmpty()) && filename != null) {
+                                run = para.createRun();
+                                run.setText("This table shows information about \"" +filename + "\"");
+                            }  
+                        }
+
+                        // Create gap before each table insert
+                        cursor = table.getCTTbl().newCursor();
+                        if (cursor != null) {
+                            para2 = ForensicExpertWitnessReport_doc.insertNewParagraph(cursor);                               
+                        }
+                        if (para2 != null) {
+                            run2 = para2.createRun();
+                            run2.setText("");
+                        }
+
+                        // Increment the amount of tables created
+                        count++;
                     }
-                }
-                else {
-                    JOptionPane.showMessageDialog(null, "You did not enter an evidence heading", "Evidence heading error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -490,6 +506,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
     private String modifiedtime;
     private String accessedtime;
     private int count;
+    private int heading_count;
     private List<XWPFParagraph> paragraphlist;
     private XWPFTable[] tables;
     private XWPFParagraph[] paragraphs;
