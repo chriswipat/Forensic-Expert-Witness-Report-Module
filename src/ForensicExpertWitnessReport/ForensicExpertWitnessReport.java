@@ -10,7 +10,7 @@
  * the degree of Computer and Digital Forensics BSc (Hons),
  * at Northumbria University in Newcastle. This project includes
  * the aim of aiding in automation, ease and effectiveness of digital 
- * forensic practitioners while conducting digital forensic
+ * forensic practitioners whilst conducting digital forensic
  * investigations in Autopsy.
  * 
  * @author Chris Wipat
@@ -58,6 +58,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
     private XWPFDocument ForensicExpertWitnessReport_doc = null;
     private String evidenceHeading = null;    
     private FileOutputStream out = null;
+    private String file_extension = "docx";
 
     /**
      * GetName Method
@@ -117,9 +118,10 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
     @Override
     public void generateReport(String baseReportDir, ReportProgressPanel progressPanel) {
         
-        // Request the inputted forensic expert witness report and the evidence heading from our GUI panel
+        // Request the inputted forensic expert witness report, evidence heading and file extension from our GUI panel.
         ForensicExpertWitnessReport_doc = configPanel.getSelectedDocument();
         evidenceHeading = configPanel.getEvidenceHeading();
+        file_extension = configPanel.getFileExtension();
 
         // Set the progressPanel to a known amount, start the progressPanel and update it.
         progressPanel.setIndeterminate(false);
@@ -132,11 +134,16 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
         
         // Create arraylist containing the failed to report tagged files
         ArrayList<String> failedExports = new ArrayList<String>();
-             
+         
+		// For each tag name in the list of tag names, do the following
         for (TagName tagName : tagNames) {
+			
+			// Break the loop if the user clicks cancel
             if (progressPanel.getStatus() == ReportProgressPanel.ReportStatus.CANCELED) {
                 break;
             }
+			
+			// Account for false user inputs
             if (ForensicExpertWitnessReport_doc == null) {
                 JOptionPane.showMessageDialog(null, "Unable to add tagged files to the report.", "Inputted Document Error", JOptionPane.ERROR_MESSAGE);
                 break;
@@ -149,6 +156,8 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                 JOptionPane.showMessageDialog(null, "Evidence headings must be 3 characters or longer.", "Inputted Evidence Heading Error", JOptionPane.ERROR_MESSAGE);
                 break;
             }
+			
+			// Try-catch the following, required for retrieving the content of the tagged files.
             try {
                 // Request the content of the tagged files by their name and set to a list
                 List<ContentTag> tags = tagsManager.getContentTagsByTagName(tagName);
@@ -171,9 +180,6 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
 
                 // Count the amount of tables we are creating
                 count = 0;
-
-                // Count the amount of evidence headings found
-                heading_count = 0;
 
                 // For each tagged file, do the following                
                 for (ContentTag tag : tags) {
@@ -221,7 +227,10 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                         // Retrieve the comment
                         if (tag.getComment() != null) {
                             comment = tag.getComment().trim();
-                        }                        
+                        }          
+                        
+                        // Count the amount of evidence headings found
+                        heading_count = 0;
 
                         // Build the Tables with the retrieved metadata information
                         buildTables(tags, filename, Path, md5hash, comment, createdtime, modifiedtime, accessedtime);
@@ -257,7 +266,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
             
             // Write the Document in file system
             try {
-                out = new FileOutputStream(new File(baseReportDir + "report.docx"));
+                out = new FileOutputStream(new File(baseReportDir + "report." + file_extension));
             } catch(FileNotFoundException e){
                 JOptionPane.showMessageDialog(null, "Unable to create new report.", "Create New Report Error", JOptionPane.ERROR_MESSAGE);
                 Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create new report", e);

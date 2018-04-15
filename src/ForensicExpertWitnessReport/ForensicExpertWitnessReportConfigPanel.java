@@ -10,8 +10,8 @@
  * This class was written for a final year project for
  * the degree of Computer and Digital Forensics BSc (Hons),
  * at Northumbria University in Newcastle. This project includes
- * the aim of aiding in automation, ease and effectivness of digital 
- * forensic practitioners while conducting digital forensic
+ * the aim of aiding in automation, ease and increase effectivness of digital 
+ * forensic practitioners whilst conducting digital forensic
  * investigations in Autopsy.
  * 
  * @author Chris Wipat
@@ -72,6 +72,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private String inputted_file_ext;       
     private String selectedDocumentName = TemplateOne_name;
     private String evidenceHeading = "Section 2 - Evidence";
+    private String file_extension;
     private final Set<String> supported_extentions = new HashSet<String>();
     private FileOutputStream fos = null;
     private File file = null;
@@ -359,9 +360,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("MS Word Documents", "DOC", "DOCX", "RTF", "DOT", "DOTX", "DOTM", "DOCM FlatOPC", "FlatOpcMacroEnabled", "FlatOpcTemplate", "FlatOpcTemplateMacroEnabled"));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("OpenOffice Documents", "ODT", "OTT")); 
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("WordprocessingML", "XML"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("MS Word Documents", "DOCX", "DOTX", "DOTM", "DOCM", "DOCM FlatOPC")); 
         fileChooser.setAcceptAllFileFilterUsed(true);
         int result = fileChooser.showOpenDialog(null);
  
@@ -377,7 +376,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
                 expertWitnessReportComboBox.setSelectedIndex(2);
             }            
         }    
-    }
+    } 
     /**
      * JTextField1KeyReleased Method
      * Eighth Mutator Method.
@@ -401,14 +400,14 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private void createDocuments(String inputted_full_path) {
         try {
             TemplateOne_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_one.docx"));
-            TemplateTwo_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_one.docx"));  
+            TemplateTwo_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_one.docx"));        
             if (inputted_full_path != null) {
                 inputted_doc = new XWPFDocument(OPCPackage.open(inputted_full_path));
             }
-        } catch(IOException e) {
+        } catch(IOException e){
             Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", e);
-        } catch (InvalidFormatException ex) {
-            Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", ex);
+        } catch (InvalidFormatException e) {
+            Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", e);
         }
     }
     
@@ -477,15 +476,12 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      * PopulateSupportedExtentions
      * Eleventh Mutator Method.
      * 
-     * Adds supported forensic expert witness report file extentions
+     * Add supported forensic expert witness report file extensions
      * 
      */
     private void populateSupportedExtentions () {
-        supported_extentions.add("doc"); supported_extentions.add("docx"); supported_extentions.add("rtf");
-        supported_extentions.add("dot"); supported_extentions.add("dotx"); supported_extentions.add("dotm");
-        supported_extentions.add("docm flatopc"); supported_extentions.add("flatopcmacroenabled"); supported_extentions.add("flatopctemplate");
-        supported_extentions.add("flatopctemplatemacroenabled"); supported_extentions.add("odt"); supported_extentions.add("ott");
-        supported_extentions.add("XML");
+        supported_extentions.add("docx"); supported_extentions.add("dotx"); supported_extentions.add("dotm");
+        supported_extentions.add("docm"); supported_extentions.add("docm flatopc"); 
     }
     
     /**
@@ -535,6 +531,27 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      */
     public String getEvidenceHeading() {
         return evidenceHeading;
+    }
+    
+    /**
+     * GetFileExtension Method
+     * Fourth Accessor Method.
+     * 
+     * Returns the file extension of the selected document
+     * 
+     * @return file_extension
+     */
+    public String getFileExtension() {
+        if (selectedDocumentName.equals(inputted_name)) {
+            return inputted_file_ext;
+        }
+        if (selectedDocumentName.equals(TemplateOne_name)) {
+            return "docx";
+        }
+        if (selectedDocumentName.equals(TemplateTwo_name)) {
+            return "docx";
+        }
+        return "docx";
     }
     
     /**

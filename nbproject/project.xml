@@ -72,6 +72,10 @@
                 <binary-origin>release/modules/ext/xmlpublic.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/swing-layout-1.0.4.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/swing-layout-1.0.4.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/xbean_xpath.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/xbean_xpath.jar</binary-origin>
             </class-path-extension>
