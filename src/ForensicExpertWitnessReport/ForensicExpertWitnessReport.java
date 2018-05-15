@@ -135,17 +135,17 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
         // Create arraylist containing the failed to report tagged files
         ArrayList<String> failedExports = new ArrayList<String>();
          
-		// For each tag name in the list of tag names, do the following
+	// For each tag name in the list of tag names, do the following
         for (TagName tagName : tagNames) {
 			
-			// Break the loop if the user clicks cancel
+            // Break the loop if the user clicks cancel
             if (progressPanel.getStatus() == ReportProgressPanel.ReportStatus.CANCELED) {
                 break;
             }
-			
-			// Account for false user inputs
+            
+            // Account for false user inputs
             if (ForensicExpertWitnessReport_doc == null) {
-                JOptionPane.showMessageDialog(null, "Unable to add tagged files to the report.", "Inputted Document Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Inputted Document Error.", "Unable to add tagged files to the report", JOptionPane.ERROR_MESSAGE);
                 break;
             }
             if (evidenceHeading == null || (evidenceHeading.isEmpty())) {
@@ -157,7 +157,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                 break;
             }
 			
-			// Try-catch the following, required for retrieving the content of the tagged files.
+            // Try-catch the following, required for retrieving the content of the tagged files.
             try {
                 // Request the content of the tagged files by their name and set to a list
                 List<ContentTag> tags = tagsManager.getContentTagsByTagName(tagName);

@@ -63,10 +63,14 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private List<TagName> tagNames;
     private static final long serialVersionUID = 1L; 
     private final String TemplateOne_name = "Pre-existing Template 1";
-    private final String TemplateTwo_name = "Pre-existing Template 2";  
+    private final String TemplateTwo_name = "Pre-existing Template 2"; 
+    private final String TemplateThree_name = "Pre-existing Template 3";
     private XWPFDocument TemplateOne_doc = null;
     private XWPFDocument TemplateTwo_doc = null;
-    private XWPFDocument inputted_doc = null; 
+    private XWPFDocument TemplateThree_doc = null;
+    private XWPFDocument inputted_doc = null;
+    private boolean TemplateTwo_extracted = false;
+    private boolean TemplateThree_extracted = false;
     private String inputted_name = "input";
     private String inputted_full_path;
     private String inputted_file_ext;       
@@ -77,6 +81,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private FileOutputStream fos = null;
     private File file = null;
     private File Dir = null;
+
     
     /**
      * Constructor for objects of class ForensicExpertWitnessReportConfigPanel
@@ -154,6 +159,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         expertWitnessReportComboBox.removeAllItems();        
         expertWitnessReportComboBox.addItem(TemplateOne_name); 
         expertWitnessReportComboBox.addItem(TemplateTwo_name);
+        expertWitnessReportComboBox.addItem(TemplateThree_name);
     } 
     
     /**
@@ -329,19 +335,37 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void expertWitnessReportComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
+        
         selectedDocumentName = (String)expertWitnessReportComboBox.getSelectedItem();
         if (TemplateOne_name.equals(selectedDocumentName)) {
             jTextField1.setText("Section 2 - Evidence");
+            evidenceHeading = "Section 2 - Evidence";
         }
         if (TemplateTwo_name.equals(selectedDocumentName)) {
-            jTextField1.setText("Section 5 - Evidence");
+            if(!TemplateTwo_extracted) {
+                extractDocument("Pre_existing_template_two.docx");
+                createDocuments(null);
+                TemplateTwo_extracted = true;
+            }
+            jTextField1.setText("Analysis_evidence");
+            evidenceHeading = "Analysis_evidence";
+        }
+        if (TemplateThree_name.equals(selectedDocumentName)) {
+            if(!TemplateThree_extracted) {
+                extractDocument("Pre_existing_template_three.docx");
+                createDocuments(null);
+                TemplateThree_extracted = true;
+            }
+            jTextField1.setText("Analysis_evidence");
+            evidenceHeading = "Analysis_evidence";
         }
         if (selectedDocumentName != null && inputted_name != null) {
             if (selectedDocumentName.equals(inputted_name)) {
-                jTextField1.setText("...");
+                jTextField1.setText("Enter a heading");
+                evidenceHeading = "";
             }
         }
-             
+    
     }//GEN-LAST:event_hashSetsComboBoxActionPerformed
 
     /**
@@ -373,7 +397,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
                 populateForensicExpertWitnessReports();
                 createDocuments(inputted_full_path);
                 expertWitnessReportComboBox.addItem(inputted_name); 
-                expertWitnessReportComboBox.setSelectedIndex(2);
+                expertWitnessReportComboBox.setSelectedIndex(3);
             }            
         }    
     } 
@@ -397,17 +421,26 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      * 
      * @param inputted 
      */
-    private void createDocuments(String inputted_full_path) {
+    private void createDocuments(String inputdoc) {
         try {
             TemplateOne_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_one.docx"));
-            TemplateTwo_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_one.docx"));        
-            if (inputted_full_path != null) {
-                inputted_doc = new XWPFDocument(OPCPackage.open(inputted_full_path));
+            TemplateTwo_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_two.docx"));
+            TemplateThree_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_three.docx"));
+            if (inputdoc != null && !inputdoc.isEmpty()) {
+                //inputted_doc = new XWPFDocument(OPCPackage.open(inputdoc));
+                //inputted_doc = new XWPFDocument(new FileInputStream(inputdoc));
+                //inputted_doc = new XWPFDocument(new FileInputStream("C:\\Users\\student\\Documents\\Pre_existing_template_one.docx"));
+                FileInputStream fis = new FileInputStream(inputdoc);
+                inputted_doc = new XWPFDocument(fis);
+                //inputted_doc = TemplateOne_doc;
             }
         } catch(IOException e){
             Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", e);
-        } catch (InvalidFormatException e) {
-            Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", e);
+        } //catch (InvalidFormatException e) {
+            //Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", e);
+        //}
+        if (inputdoc != null && !inputdoc.isEmpty() ) {
+            JOptionPane.showMessageDialog(null, inputdoc, "Sucessfully found", JOptionPane.INFORMATION_MESSAGE);
         }
     }
     
@@ -505,6 +538,9 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         if (selectedDocumentName.equals(TemplateTwo_name)) {
             return TemplateTwo_doc;
         }
+        if (selectedDocumentName.equals(TemplateThree_name)) {
+            return TemplateThree_doc;
+        }
         return TemplateOne_doc;
    }
     
@@ -549,6 +585,9 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
             return "docx";
         }
         if (selectedDocumentName.equals(TemplateTwo_name)) {
+            return "docx";
+        }
+        if (selectedDocumentName.equals(TemplateThree_name)) {
             return "docx";
         }
         return "docx";
