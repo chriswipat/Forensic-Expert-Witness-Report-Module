@@ -164,7 +164,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
 
                 // Set progress bar to the amount of files we are reporting
                 progressPanel.setMaximumProgress(tags.size());
-                progressPanel.updateStatusLabel("Adding \"" + tagName.getDisplayName() + "\" files to " + configPanel.getSelectedDocumentName() + "...");               
+                progressPanel.updateStatusLabel("Adding \"" + tagName.getDisplayName() + "\" files to " + configPanel.getSelectedDocumentName() + "...");
 
                 // Retrieve the paragraphs from the user inputted forensic expert witness report  
                 paragraphlist = ForensicExpertWitnessReport_doc.getParagraphs();
@@ -232,7 +232,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                         // Count the amount of evidence headings found
                         heading_count = 0;
 
-                        // Build the Tables with the retrieved metadata information
+                        // Build the Table for this file with the retrieved metadata information
                         buildTables(tags, filename, Path, md5hash, comment, createdtime, modifiedtime, accessedtime);
                         
                         // Display error if the evidence heading was not found & break loop

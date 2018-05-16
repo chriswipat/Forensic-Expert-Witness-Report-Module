@@ -50,8 +50,6 @@ import java.util.Set;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
@@ -62,6 +60,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private final TagsNamesListCellRenderer tagsNamesRenderer = new TagsNamesListCellRenderer();
     private List<TagName> tagNames;
     private static final long serialVersionUID = 1L; 
+    private final Set<String> supported_extentions = new HashSet<String>();
     private final String TemplateOne_name = "Pre-existing Template 1";
     private final String TemplateTwo_name = "Pre-existing Template 2"; 
     private final String TemplateThree_name = "Pre-existing Template 3";
@@ -76,12 +75,9 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private String inputted_file_ext;       
     private String selectedDocumentName = TemplateOne_name;
     private String evidenceHeading = "Section 2 - Evidence";
-    private String file_extension;
-    private final Set<String> supported_extentions = new HashSet<String>();
     private FileOutputStream fos = null;
     private File file = null;
     private File Dir = null;
-
     
     /**
      * Constructor for objects of class ForensicExpertWitnessReportConfigPanel
@@ -290,7 +286,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
                     .addComponent(expertWitnessReportComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
-}
+    }
     
     /**
      * 
@@ -344,8 +340,8 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         if (TemplateTwo_name.equals(selectedDocumentName)) {
             if(!TemplateTwo_extracted) {
                 extractDocument("Pre_existing_template_two.docx");
-                createDocuments(null);
                 TemplateTwo_extracted = true;
+                createDocuments(null);
             }
             jTextField1.setText("Analysis_evidence");
             evidenceHeading = "Analysis_evidence";
@@ -353,8 +349,8 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         if (TemplateThree_name.equals(selectedDocumentName)) {
             if(!TemplateThree_extracted) {
                 extractDocument("Pre_existing_template_three.docx");
-                createDocuments(null);
                 TemplateThree_extracted = true;
+                createDocuments(null);
             }
             jTextField1.setText("Analysis_evidence");
             evidenceHeading = "Analysis_evidence";
@@ -400,7 +396,9 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
                 expertWitnessReportComboBox.setSelectedIndex(3);
             }            
         }    
-    } 
+        
+    }
+    
     /**
      * JTextField1KeyReleased Method
      * Eighth Mutator Method.
@@ -424,23 +422,19 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private void createDocuments(String inputdoc) {
         try {
             TemplateOne_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_one.docx"));
-            TemplateTwo_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_two.docx"));
-            TemplateThree_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_three.docx"));
-            if (inputdoc != null && !inputdoc.isEmpty()) {
-                //inputted_doc = new XWPFDocument(OPCPackage.open(inputdoc));
-                //inputted_doc = new XWPFDocument(new FileInputStream(inputdoc));
-                //inputted_doc = new XWPFDocument(new FileInputStream("C:\\Users\\student\\Documents\\Pre_existing_template_one.docx"));
-                FileInputStream fis = new FileInputStream(inputdoc);
-                inputted_doc = new XWPFDocument(fis);
-                //inputted_doc = TemplateOne_doc;
+            if (TemplateTwo_extracted) {
+                TemplateTwo_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_two.docx"));
             }
-        } catch(IOException e){
+            if (TemplateThree_extracted) {
+                TemplateThree_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicExpertWitnessReportModule\\Pre_existing_template_three.docx"));
+            }
+            if (inputdoc != null && !inputdoc.isEmpty()) {
+                inputted_doc = new XWPFDocument(new FileInputStream(inputdoc));
+            }
+        }
+        catch(IOException e){
             Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", e);
-        } //catch (InvalidFormatException e) {
-            //Logger.getLogger(ForensicExpertWitnessReportConfigPanel.class.getName()).log(Level.SEVERE, "Failed to create document objects", e);
-        //}
-        if (inputdoc != null && !inputdoc.isEmpty() ) {
-            JOptionPane.showMessageDialog(null, inputdoc, "Sucessfully found", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Document object error", "Failed to create document objects", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -454,7 +448,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
      */
     private void extractDocument(String document) {
         try {
-            // Declare InputStream object as 1.docx from Java package / compiled JAR
+            // Declare InputStream object as the document from the Java package / compiled JAR
             InputStream in = getClass().getResourceAsStream(document);
             
             // Create new file object as Dir, set to user home / .ForensicExpertWitnessReportModule Directory
@@ -471,7 +465,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
                 }        
             }
             
-            // Declare new file object, set to User home / .ForensicExpertWitnessReportModule Directory + 1.docx            
+            // Declare new file object, set to User home / .ForensicExpertWitnessReportModule Directory + document           
             file = new File(dir + "\\" +document);
             
             // Create new FileOutputStream object as the created file object
@@ -482,7 +476,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
                 file.createNewFile();
             }
 
-            // Convert InputStream object / 1.docx to bytesArray
+            // Convert InputStream object / document to bytesArray
             byte[] bytesArray = IOUtils.toByteArray(in);
 
             // Write the bytesArray to the created file
@@ -595,7 +589,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     
     /**
      * GetSelectedTagNames Method
-     * Fourth Accessor Method.
+     * Fifth Accessor Method.
      * 
      * Returns the user selected tag names for files he wishes to extract.
      * 
