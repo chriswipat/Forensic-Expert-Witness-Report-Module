@@ -9,8 +9,8 @@
  * 
  * This class was written for a final year project for
  * the degree of Computer and Digital Forensics BSc (Hons),
- * at Northumbria University in Newcastle. This project includes
- * the aim of aiding in automation, ease and increase effectivness of digital 
+ * at Northumbria University in Newcastle. This project included
+ * the aim of aiding in automation, ease and increase effectiveness of digital 
  * forensic practitioners whilst conducting digital forensic
  * investigations in Autopsy.
  * 
@@ -78,6 +78,10 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private FileOutputStream fos = null;
     private File file = null;
     private File Dir = null;
+    private String colourName;
+    private String hexadecimalColourCode = "";
+    private ArrayList<String> colourNames = new ArrayList<String>();
+    private ArrayList<String> hexadecimalColourCodes = new ArrayList<String>();
     
     /**
      * Constructor for objects of class ForensicExpertWitnessReportConfigPanel
@@ -184,14 +188,15 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     // Initialize declared instance variables
     jLabel1 = new javax.swing.JLabel();
     jScrollPane1 = new javax.swing.JScrollPane();
-    tagNamesListBox = new javax.swing.JList<String>();
+    tagNamesListBox = new javax.swing.JList<String>();   
     selectAllButton = new javax.swing.JButton();
     deselectAllButton = new javax.swing.JButton();
+    optionsButton = new javax.swing.JButton();
     jLabel2 = new javax.swing.JLabel();
     expertWitnessReportComboBox = new javax.swing.JComboBox<String>();
     chooseExpertWitnessReportButton = new javax.swing.JButton();
     jLabel3 = new javax.swing.JLabel();
-    jTextField1 = new javax.swing.JTextField();
+    jTextField1 = new javax.swing.JTextField();    
 
    org.openide.awt.Mnemonics.setLocalizedText(jLabel1, "Export files tagged as:");
     
@@ -208,6 +213,13 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     deselectAllButton.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             deselectAllButtonActionPerformed(evt);
+        }
+    });
+    
+    org.openide.awt.Mnemonics.setLocalizedText(optionsButton, "Options");
+    optionsButton.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            optionsButtonActionPerformed(evt);
         }
     });
     
@@ -243,28 +255,32 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel2)
-                        .addGap(88, 88, 88)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 313, javax.swing.GroupLayout.DEFAULT_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(selectAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(deselectAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jLabel1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(expertWitnessReportComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(chooseExpertWitnessReportButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(selectAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(deselectAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(optionsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jLabel1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(expertWitnessReportComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(chooseExpertWitnessReportButton)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(8, 8, 8)
@@ -272,13 +288,15 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(selectAllButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deselectAllButton))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 114, javax.swing.GroupLayout.DEFAULT_SIZE))
+                        .addComponent(deselectAllButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(optionsButton))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(chooseExpertWitnessReportButton)
@@ -289,7 +307,6 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     }
     
     /**
-     * 
      * SelectAllButtonActionPerformed method
      * Fourth Mutator Method.
      * 
@@ -305,7 +322,6 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_selectAllButtonActionPerformed 
  
     /**
-     * 
      * DeselectAllButtonActionPerformed Method
      * Fifth Mutator Method.
      * 
@@ -321,8 +337,33 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_deselectAllButtonActionPerformed
     
     /**
-     * ExpertWitnessReportComboBoxActionPerformed Method
+     * OptionsButtonActionPerformed Method
      * Sixth Mutator Method.
+     * 
+     * On button pressed, load the options panel.
+     * 
+     * @param evt 
+     */
+    private void optionsButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        ForensicExpertWitnessReportConfigPanelOptions configPanel = new ForensicExpertWitnessReportConfigPanelOptions(colourName, hexadecimalColourCode);
+        configPanel.load();
+        if (JOptionPane.showConfirmDialog(null, configPanel, "Forensic Expert Witness Report Options", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+             configPanel.store();
+             colourName = configPanel.getTableColourName();
+             hexadecimalColourCode = configPanel.getHexadecimalColourCode();
+             colourNames = configPanel.getColourNames();
+             hexadecimalColourCodes = configPanel.getColourHexadecimals();
+             
+            if (hexadecimalColourCode.trim().length() != 6) {               
+                JOptionPane.showMessageDialog(null, "Hexadecimal colour codes must be 6 characters.", "Incorrect hexadecimal code.", JOptionPane.ERROR_MESSAGE);
+            }
+
+        }
+    }
+    
+    /**
+     * ExpertWitnessReportComboBoxActionPerformed Method
+     * Seventh Mutator Method.
      * 
      * On Combo Box user selection, set the selected item to an instance variable,
      * update the evidence heading or sub-heading text field with the matching
@@ -366,7 +407,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
 
     /**
      * ChooseExpertWitnessReportButtonActionPerformed Method
-     * Seventh Mutator Method.
+     * Eighth Mutator Method.
      * 
      * On Choose File button selected, declare JFileChooser and show
      * the file chooser to the user. Set the selected files and it's
@@ -401,7 +442,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     
     /**
      * JTextField1KeyReleased Method
-     * Eighth Mutator Method.
+     * Ninth Mutator Method.
      * 
      * On key release, set the inputted text to an instance variable.
      * 
@@ -413,7 +454,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     
     /**
      * CreateDocuments
-     * Ninth Mutator Method.
+     * Tenth Mutator Method.
      * 
      * Creates Document Objects for Forensic Expert Witness Reports
      * 
@@ -440,7 +481,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     
     /**
      * ExtractDocument
-     * Tenth Mutator Method.
+     * Eleventh Mutator Method.
      * 
      * Extracts Pre-Existing Templates from NetBeans/JAR Package into the User Home Directory.
      * 
@@ -501,7 +542,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     
     /**
      * PopulateSupportedExtentions
-     * Eleventh Mutator Method.
+     * Twelfth Mutator Method.
      * 
      * Add supported forensic expert witness report file extensions
      * 
@@ -605,6 +646,38 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
         return selectedTagNames;
     }
     
+     /**
+     * ReturnTableColour method
+     * Sixth Accessor Method.
+     * 
+     * Return the selected table colour in hexadecimal to ForensicExpertWitnessReport.java.
+     * 
+     * @return hexadecimalColourCodes.get(i)
+     * @return hexadecimalColourCode
+     * @return 000000
+     */
+    public String getTableColour() {
+        
+        // If hexadecimal value is bogus, use the distinguished colour.
+        if (hexadecimalColourCode.trim().length() != 6) {
+            
+            // Match the corresponding hexadecimal value for the colour.
+            for (int i=0; i<colourNames.size(); i++)
+            {
+                if(colourName.equals(colourNames.get(i))) {
+                    return hexadecimalColourCodes.get(i);
+                }
+            }
+            
+        // If hexadecimal value isn't bogus, return it.
+        } else {
+            return hexadecimalColourCode;
+        }
+        
+        return "000000";
+
+    }
+    
     /**
      * Class TagNamesListModel of package ForensicExpertWitnessReport
      * 
@@ -664,6 +737,7 @@ class ForensicExpertWitnessReportConfigPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;   
     private javax.swing.JList<String> tagNamesListBox = new JList<String>();
+    private javax.swing.JButton optionsButton;
     private javax.swing.JButton selectAllButton;
     private javax.swing.JButton deselectAllButton;
     private javax.swing.JLabel jLabel2;

@@ -8,7 +8,7 @@
  * 
  * This class was written for a final year project for
  * the degree of Computer and Digital Forensics BSc (Hons),
- * at Northumbria University in Newcastle. This project includes
+ * at Northumbria University in Newcastle. This project included
  * the aim of aiding in automation, ease and effectiveness of digital 
  * forensic practitioners whilst conducting digital forensic
  * investigations in Autopsy.
@@ -59,6 +59,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
     private String evidenceHeading = null;    
     private FileOutputStream out = null;
     private String file_extension = "docx";
+    private String tableColour = null;
 
     /**
      * GetName Method
@@ -118,11 +119,12 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
     @Override
     public void generateReport(String baseReportDir, ReportProgressPanel progressPanel) {
         
-        // Request the inputted forensic expert witness report, evidence heading and file extension from our GUI panel.
+        // Request inputted configuration details from our GUI panel.
         ForensicExpertWitnessReport_doc = configPanel.getSelectedDocument();
         evidenceHeading = configPanel.getEvidenceHeading();
         file_extension = configPanel.getFileExtension();
-
+        tableColour = configPanel.getTableColour();
+                
         // Set the progressPanel to a known amount, start the progressPanel and update it.
         progressPanel.setIndeterminate(false);
         progressPanel.start();
@@ -310,41 +312,10 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
         // Set progress panel status to complete
         progressPanel.complete(ReportProgressPanel.ReportStatus.COMPLETE);
     }
-    
-
-    /**
-     * GetConfigurationPanel Method.
-     * Fourth Accessor Method.
-     * 
-     * First method called by Autopsy to show the GUI of the report module to the user.
-     * 
-     * @return configPanel
-     */
-    @Override
-    public JPanel getConfigurationPanel() {
-        configPanel = new ForensicExpertWitnessReportConfigPanel();
-        return configPanel;       
-    }
-    
-    /**
-     * GetDefault Method.
-     * Fifth Accessor Method.
-     * 
-     * Get the default instance of this report, used to return an instance of the report
-     * back to Autopsy.
-     * 
-     * @return instance
-     */
-    public static synchronized ForensicExpertWitnessReport getDefault() {
-        if (instance == null) {
-            instance = new ForensicExpertWitnessReport();
-        }
-        return instance;
-    }
-    
+        
     /**
      * Build Tables Method
-     * Second mutator method.
+     * Third mutator method.
      * 
      * Builds table using given information about tagged Autopsy file.
      * 
@@ -422,7 +393,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                         // Create first row of table // File Name
                         XWPFTableRow tableRowOne = table.getRow(0);
                         tableRowOne.getCell(0).setText("File Name");
-                        tableRowOne.getCell(0).setColor("000000");
+                        tableRowOne.getCell(0).setColor(tableColour);
                         tableRowOne.addNewTableCell();
                         if (filename != null) {
                             tableRowOne.getCell(1).setText(filename);
@@ -431,7 +402,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                         // Create second row of table // File Path
                         XWPFTableRow tableRowTwo = table.createRow();
                         tableRowTwo.getCell(0).setText("File Path");
-                        tableRowTwo.getCell(0).setColor("000000");
+                        tableRowTwo.getCell(0).setColor(tableColour);
                         if (Path != null) {
                             tableRowTwo.getCell(1).setText(Path);
                         }
@@ -439,7 +410,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                         // Create third row of table // Hash Value
                         XWPFTableRow tableRowThree = table.createRow();
                         tableRowThree.getCell(0).setText("Hash Value");
-                        tableRowThree.getCell(0).setColor("000000");
+                        tableRowThree.getCell(0).setColor(tableColour);
                         if (md5hash != null) {
                             tableRowThree.getCell(1).setText(md5hash);
                         }
@@ -450,7 +421,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                         // Create fourth row of table // Created time
                         XWPFTableRow tableRowFour = table.createRow();
                         tableRowFour.getCell(0).setText("Created time");
-                        tableRowFour.getCell(0).setColor("000000");
+                        tableRowFour.getCell(0).setColor(tableColour);
                         if (Path != null) {
                             tableRowFour.getCell(1).setText(createdtime);
                         }
@@ -458,7 +429,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                         // Create fifth row of table // Modified time
                         XWPFTableRow tableRowFive = table.createRow();
                         tableRowFive.getCell(0).setText("Modified time");
-                        tableRowFive.getCell(0).setColor("000000");
+                        tableRowFive.getCell(0).setColor(tableColour);
                         if (Path != null) {
                             tableRowFive.getCell(1).setText(modifiedtime);
                         }
@@ -466,7 +437,7 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                         // Create sixth row of table // Accessed time
                         XWPFTableRow tableRowSix = table.createRow();
                         tableRowSix.getCell(0).setText("Accessed time");
-                        tableRowSix.getCell(0).setColor("000000");
+                        tableRowSix.getCell(0).setColor(tableColour);
                         if (Path != null) {
                             tableRowSix.getCell(1).setText(accessedtime);
                         }
@@ -504,6 +475,36 @@ public class ForensicExpertWitnessReport implements GeneralReportModule {
                 }
             }
         }
+    }
+    
+        /**
+     * GetConfigurationPanel Method.
+     * Fourth Accessor Method.
+     * 
+     * First method called by Autopsy to show the GUI of the report module to the user.
+     * 
+     * @return configPanel
+     */
+    @Override
+    public JPanel getConfigurationPanel() {
+        configPanel = new ForensicExpertWitnessReportConfigPanel();
+        return configPanel;       
+    }
+    
+    /**
+     * GetDefault Method.
+     * Fifth Accessor Method.
+     * 
+     * Get the default instance of this report, used to return an instance of the report
+     * back to Autopsy.
+     * 
+     * @return instance
+     */
+    public static synchronized ForensicExpertWitnessReport getDefault() {
+        if (instance == null) {
+            instance = new ForensicExpertWitnessReport();
+        }
+        return instance;
     }
     
     // Further Variable Declaration //GEN-BEGIN:variables
