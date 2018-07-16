@@ -285,22 +285,18 @@ public final class ForensicExpertWitnessReportConfigPanelOptions extends IngestM
      * TableColoursComboBoxActionPerformed Method
      * Fourth Mutator Method.
      * 
-     * On colour selected, add the hexadecimal code to JTextField1..
+     * On colour selected, add the corresponding hexadecimal code to JTextField1.
      * 
      * @param evt 
      */     
     private void tableColoursComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tableColoursComboBoxActionPerformed
-        for (int i=0; i<colourNames.size(); i++)
-        {
-            if(tableColoursComboBox.getSelectedItem().toString().equals(colourNames.get(i))) 
-            {
-                hexadecimalEntryField.setText(hexadecimalColourCodes.get(i));
-            }
-        }        
-        
-        if(tableColoursComboBox.getSelectedItem().toString().equals("Inputted Code")) {
+
+        if (tableColoursComboBox.getSelectedIndex() != 12) {
+            hexadecimalEntryField.setText(hexadecimalColourCodes.get(tableColoursComboBox.getSelectedIndex()));
+        } else {
             hexadecimalEntryField.setText(hexadecimalColourCode);
         }
+ 
     }//GEN-LAST:event_tableColoursComboBoxActionPerformed
 
     /**
@@ -312,7 +308,7 @@ public final class ForensicExpertWitnessReportConfigPanelOptions extends IngestM
     private void checker() {
         for (int i=0; i<hexadecimalColourCodes.size(); i++)
         {
-            if (hexadecimalColourCodes.get(i).equals(hexadecimalEntryField.getText())) {
+            if (hexadecimalColourCodes.get(i).equals(hexadecimalEntryField.getText().trim())) {
                 
                 //If colour found, set a variable and set the corresponding ComboBox index.
                 hexadecimalCode_matches_a_ComboBox_colour = true;
