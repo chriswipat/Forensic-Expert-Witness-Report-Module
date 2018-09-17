@@ -45,7 +45,7 @@
  * @version 17.09.2018
  */
 
-package ForensicReport;
+package ForensicExpertWitnessReport;
 
 import javax.swing.JPanel;
 import org.sleuthkit.autopsy.report.GeneralReportModule;

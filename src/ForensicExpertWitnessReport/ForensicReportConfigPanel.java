@@ -19,7 +19,7 @@
  * @version 17.09.2018
  */
 
-package ForensicReport;
+package ForensicExpertWitnessReport;
 
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
