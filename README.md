@@ -1,4 +1,4 @@
-Forensic Expert Witness Report Module - Installation Instructions
+Forensic Expert Witness Report Module - Installation & Usage Instructions
 
 1. Download ForensicExpertWitnessReport.nbm from https://github.com/chriswipat/forensic_expert_witness_report_module/relases
 2. Run Autopsy, version 3.0.7 and above.
