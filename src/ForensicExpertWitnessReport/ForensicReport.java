@@ -1,4 +1,7 @@
 /*
+ * ---------------------------------------------------------------
+ * ---------------------------------------------------------------
+ * 
  * Forensic Expert Witness Report
  * 
  * This module adds tagged evidence directly into structured and styled tables 
@@ -20,6 +23,7 @@
  *
  * See LICENSE or <http://www.gnu.org/licenses/>.
  *
+ * ---------------------------------------------------------------
  * ---------------------------------------------------------------
  *
  * Class ForensicReport.java of package ForensicExpertWitnessReport
@@ -43,6 +47,9 @@
  * 
  * @author Chris Wipat
  * @version 17.09.2018
+ * 
+ * ---------------------------------------------------------------
+ * ---------------------------------------------------------------
  */
 
 package ForensicExpertWitnessReport;
