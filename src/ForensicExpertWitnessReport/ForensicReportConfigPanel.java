@@ -68,7 +68,6 @@ class ForensicReportConfigPanel extends javax.swing.JPanel {
     private XWPFDocument TemplateOne_doc = null;
     private XWPFDocument TemplateTwo_doc = null;
     private XWPFDocument TemplateThree_doc = null; 
-//    private XWPFDocument Example_table = null;
     private XWPFDocument inputted_doc = null;
     private XWPFDocument selected_doc = null;
     private boolean TemplateTwo_extracted = false;
@@ -102,7 +101,6 @@ class ForensicReportConfigPanel extends javax.swing.JPanel {
         populateForensicReports();
         populateSupportedExtentions();
         extractDocument("Pre_existing_template_one.docx");
-//        extractDocument("Example_Table.docx");
         createDocuments(null);
     }
         
@@ -471,7 +469,6 @@ class ForensicReportConfigPanel extends javax.swing.JPanel {
     private void createDocuments(String inputdoc) {
         try {
             TemplateOne_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicReportModule\\Pre_existing_template_one.docx"));
-//            Example_table = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicReportModule\\Example_Table.docx"));
             if (TemplateTwo_extracted) {
                 TemplateTwo_doc = new XWPFDocument(new FileInputStream(System.getProperty("user.home") + "\\.ForensicReportModule\\Pre_existing_template_two.docx"));
             }
@@ -690,21 +687,7 @@ class ForensicReportConfigPanel extends javax.swing.JPanel {
         return "000000";
 
     }
-    
-//    /**
-//     * GetExampleTable Method.
-//     * Seventh Accessor Method.
-//     * 
-//     * Return the document object for the example table.
-//     * 
-//     * Used later on to duplicate the spacing and style of the table.
-//     * 
-//     * @return Example_table
-//     */
-//    public XWPFDocument getExampleTable() {
-//        return Example_table;
-//    }
-    
+        
     /**
      * Class TagNamesListModel of package ForensicReport
      * 

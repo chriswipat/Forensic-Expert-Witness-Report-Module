@@ -20,7 +20,7 @@
  *
  * See LICENSE or <http://www.gnu.org/licenses/>.
  *
- * ###################################
+ * ---------------------------------------------------------------
  *
  * Class ForensicReport.java of package ForensicExpertWitnessReport
  * 
@@ -98,7 +98,6 @@ public class ForensicReport implements GeneralReportModule {
     private String tableColour = null;
     private FileInputStream image_is = null;
     private final String fontColour = "ffffff";
-//    private XWPFDocument Example_Table;    
 
     /**
      * GetName Method
@@ -163,7 +162,6 @@ public class ForensicReport implements GeneralReportModule {
         evidenceHeading = configPanel.getEvidenceHeading();
         file_extension = configPanel.getFileExtension();
         tableColour = configPanel.getTableColour();
-//        Example_Table = configPanel.getExampleTable();
                 
         // Set the progressPanel to a known amount, start the progressPanel and update it.
         progressPanel.setIndeterminate(false);
@@ -487,12 +485,12 @@ public class ForensicReport implements GeneralReportModule {
                             }                                
                         }
                                                 
-//                        // Set table width to 100%, 1 inch = 1440                        
-//                        width = tables[count].getCTTbl().addNewTblPr().addNewTblW();
-//                        width.setType(STTblWidth.DXA);
-//                        width.setW(BigInteger.valueOf((6*1440)+938));
-//                        tables[count].getCTTbl().addNewTblGrid().addNewGridCol().setW(BigInteger.valueOf((1*1440)+85));
-//                        tables[count].getCTTbl().getTblGrid().addNewGridCol().setW(BigInteger.valueOf((5*1440)+938-85));
+                        // Set table width to 100%, 1 inch = 1440                        
+                        width = tables[count].getCTTbl().addNewTblPr().addNewTblW();
+                        width.setType(STTblWidth.DXA);
+                        width.setW(BigInteger.valueOf((6*1440)+938));
+                        tables[count].getCTTbl().addNewTblGrid().addNewGridCol().setW(BigInteger.valueOf((1*1440)+85));
+                        tables[count].getCTTbl().getTblGrid().addNewGridCol().setW(BigInteger.valueOf((5*1440)+938-85));
                                                                        
                         // Create first row & 2nd column of table // File Name
                         XWPFTableRow tableRowOne = tables[count].getRow(0);
@@ -540,8 +538,6 @@ public class ForensicReport implements GeneralReportModule {
                         width = tables[count].getRow(3).getCell(1).getCTTc().addNewTcPr().addNewTcW();
                         width.setW(BigInteger.valueOf((((5*1440)+938-85) / 2) + 720));
                         width.setType(STTblWidth.DXA);
-                        
-//                        tableRowFour.addNewTableCell();
 
                         // Create fifth row of table // Modified time
                         XWPFTableRow tableRowFive = tables[count].createRow();
@@ -566,11 +562,6 @@ public class ForensicReport implements GeneralReportModule {
                         width = tables[count].getRow(5).getCell(1).getCTTc().addNewTcPr().addNewTcW();
                         width.setW(BigInteger.valueOf((((5*1440)+938-85) / 2) + 720));
                         width.setType(STTblWidth.DXA);
-                        
-                        // Create third column // Content
-                        if (image_is != null) {
-                            //Create column
-                        }
 
                         // Create paragraph after table // Comment
                         cursor = tables[count].getCTTbl().newCursor();
