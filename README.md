@@ -6,6 +6,8 @@ Forensic Expert Witness Report Module - Installation & Usage Instructions
 4. Follow the steps, restart Autopsy.
 5. Go to Generate Report > ForensicReport to use.
 
+Installation Example: https://www.youtube.com/watch?v=Iy1Y7c2k734
+
 Un-installation Instructions:
 
 1. Tools > Plugins > Installed > ForensicExpertWitnessReport > Uninstall
